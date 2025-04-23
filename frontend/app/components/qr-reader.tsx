@@ -5,7 +5,9 @@ import "./qr-reader.css";
 
 export function QrReader() {
   // QR States
-  const scanner = useRef<QrScanner>(null);
+  const scanner = useRef<QrScanner | null>(
+    null
+  ) as React.MutableRefObject<QrScanner | null>;
   const videoEl = useRef<HTMLVideoElement>(null);
   const qrBoxEl = useRef<HTMLDivElement>(null);
   const [qrOn, setQrOn] = useState<boolean>(true);
@@ -75,7 +77,7 @@ export function QrReader() {
   return (
     <div className="qr-reader">
       {/* QR */}
-      <video ref={videoEl}></video>
+      <video ref={videoEl} autoPlay muted playsInline></video>
       <div ref={qrBoxEl} className="qr-box">
         <img
           src={QrFrame}
