@@ -3,7 +3,12 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "dev": "nodemon --exec tsx src/index.ts"
+    "dev": "nodemon --exec tsx src/index.ts",
+    "db:drop": "sequelize-cli db:drop",
+    "db:create": "sequelize-cli db:create",
+    "db:migrate": "sequelize-cli db:migrate",
+    "db:seed": "sequelize-cli db:seed:all",
+    "db:reset": "sequelize-cli db:migrate:undo:all && sequelize-cli db:migrate"
   },
   "keywords": [],
   "author": "",
@@ -17,7 +22,8 @@
     "pg": "^8.14.1",
     "pg-hstore": "^2.3.4",
     "qrcode": "^1.5.4",
-    "sequelize": "^6.37.7"
+    "sequelize": "^6.37.7",
+    "sequelize-cli": "^6.6.2"
   },
   "devDependencies": {
     "@types/cors": "^2.8.17",
@@ -27,7 +33,6 @@
     "eslint": "^9.25.0",
     "nodemon": "^3.1.9",
     "prettier": "^3.5.3",
-    "sequelize-cli": "^6.6.2",
     "tsx": "^4.19.3",
     "typescript": "^5.8.3"
   }
