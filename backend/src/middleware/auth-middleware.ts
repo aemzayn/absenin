@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import jwt from "jsonwebtoken";
-import config from "../config/config";
+import config, { isDev } from "../config/config";
 
 export async function authMiddleware(
   req: Request,
@@ -14,6 +14,7 @@ export async function authMiddleware(
     }
 
     const accessToken = req.headers.authorization.split(" ")[1];
+
     if (!accessToken) {
       res.status(401).json({ message: "Unauthorized" });
       return;
@@ -26,6 +27,10 @@ export async function authMiddleware(
         res.status(401).json({ message: "Unauthorized" });
         return;
       }
+
+      const userId = (decoded as any).id;
+      req.user = { id: userId };
+      next();
     } catch (error) {
       if (error instanceof jwt.TokenExpiredError) {
         const refreshToken = req.headers["x-refresh-token"];
@@ -48,10 +53,12 @@ export async function authMiddleware(
           const newAccessToken = jwt.sign(
             { id: (refreshDecoded as any).id },
             config.ACCESS_TOKEN_SECRET,
-            { expiresIn: "15m" }
+            { expiresIn: isDev ? "1d" : "15m" }
           );
 
           res.setHeader("x-access-token", newAccessToken);
+          req.user = { id: (refreshDecoded as any).id };
+          req.headers.authorization = `Bearer ${newAccessToken}`;
           next();
           return;
         } catch (error) {

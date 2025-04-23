@@ -8,9 +8,23 @@ export async function getMembers(
   next: NextFunction
 ) {
   try {
+    const organizationId = req.query.organizationId;
+    if (!organizationId) {
+      res.status(400).json({
+        error: "Organization ID is required",
+      });
+      return;
+    }
+
     const members = await db.member.findMany({
       include: {
         qrcode: true,
+      },
+      where: {
+        organizationId: +organizationId,
+      },
+      orderBy: {
+        name: "asc",
       },
     });
     res.status(200).json({
@@ -51,7 +65,8 @@ export async function registerMembers(
   next: NextFunction
 ) {
   try {
-    const members = req.body;
+    const members = req.body.members;
+    const organizationId = req.body.organizationId;
 
     if (!members || !Array.isArray(members)) {
       res.status(400).json({
@@ -63,12 +78,14 @@ export async function registerMembers(
     const createdMembers = await db.member.createManyAndReturn({
       data: members.map((member) => ({
         name: member.name,
+        organizationId,
       })),
     });
 
     // create qrcode
     const qrCodes = [];
     const memberIds = [];
+
     for (const member of createdMembers) {
       const qrCode = await QRCode.toDataURL(
         JSON.stringify({

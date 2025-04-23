@@ -2,7 +2,7 @@ import { NextFunction, Request, Response } from "express";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
 import db from "../database";
-import config from "../config/config";
+import config, { isDev } from "../config/config";
 
 export async function register(
   req: Request,
@@ -69,14 +69,14 @@ export async function login(req: Request, res: Response, next: NextFunction) {
     const { password: _, ...userWithoutPassword } = user;
 
     const accessToken = jwt.sign({ id: user.id }, config.ACCESS_TOKEN_SECRET, {
-      expiresIn: "15m",
+      expiresIn: isDev ? "1d" : "15m",
     });
 
     const refreshToken = jwt.sign(
       { id: user.id },
       config.REFRESH_TOKEN_SECRET,
       {
-        expiresIn: "7d",
+        expiresIn: isDev ? "30d" : "7d",
       }
     );
 

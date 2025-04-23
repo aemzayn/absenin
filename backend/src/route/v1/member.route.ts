@@ -1,7 +1,7 @@
 import { Router } from "express";
 const router = Router();
 
-import * as controller from "../../controllers/members.controller";
+import * as controller from "../../controllers/member.controller";
 
 router.get("/", controller.getMembers);
 

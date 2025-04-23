@@ -9,4 +9,6 @@ const config = {
   REFRESH_TOKEN_SECRET: process.env.REFRESH_TOKEN_SECRET ?? "refresh_secret",
 };
 
+export const isDev = config.nodeEnv === "development";
+
 export default config;

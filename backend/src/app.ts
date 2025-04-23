@@ -1,14 +1,14 @@
 import express, { NextFunction, Request, Response } from "express";
 import cors from "cors";
-import bodyParser from "body-parser";
+import morgan from "morgan";
+
 import apiV1 from "./route/v1";
 
 const app = express();
 
 app.use(cors());
 app.use(express.json());
-// app.use(bodyParser.json());
-// app.use(bodyParser.urlencoded({ extended: true }));
+app.use(morgan("dev"));
 
 app.get("/", (req, res) => {
   res.send("Hello World!");
