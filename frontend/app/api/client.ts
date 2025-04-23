@@ -1,9 +1,12 @@
 import axios from "axios";
 
+const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+
 const apiClient = axios.create({
   baseURL: import.meta.env.VITE_API_URL,
   headers: {
     "Content-Type": "application/json",
+    "X-Timezone": timezone,
   },
 });
 

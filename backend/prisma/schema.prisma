@@ -17,8 +17,8 @@ model User {
   name        String                   @db.VarChar(255)
   password    String
   isAdmin     Boolean                  @default(false)
-  createdAt   DateTime                 @default(now())
-  updatedAt   DateTime                 @default(now()) @updatedAt
+  createdAt   DateTime                 @default(now()) @db.Timestamptz(3)
+  updatedAt   DateTime                 @default(now()) @updatedAt @db.Timestamptz(3)
   memberships OrganizationMembership[]
 }
 
@@ -48,8 +48,8 @@ model Organization {
   phone                  String?                  @db.VarChar(255)
   email                  String?                  @db.VarChar(255)
   website                String?                  @db.VarChar(255)
-  createdAt              DateTime                 @default(now())
-  updatedAt              DateTime                 @default(now()) @updatedAt
+  createdAt              DateTime                 @default(now()) @db.Timestamptz(3)
+  updatedAt              DateTime                 @default(now()) @updatedAt @db.Timestamptz(3)
   members                Member[]
   events                 Event[]
   OrganizationMembership OrganizationMembership[]
@@ -59,10 +59,10 @@ model Event {
   id             Int           @id @default(autoincrement())
   name           String        @db.VarChar(255)
   description    String?       @db.Text
-  date           DateTime?
+  date           DateTime?     @db.Timestamptz(3)
   location       String?       @db.VarChar(255)
-  createdAt      DateTime      @default(now())
-  updatedAt      DateTime      @default(now()) @updatedAt
+  createdAt      DateTime      @default(now()) @db.Timestamptz(3)
+  updatedAt      DateTime      @default(now()) @updatedAt @db.Timestamptz(3)
   Organization   Organization? @relation(fields: [organizationId], references: [id])
   organizationId Int?
   EventMember    EventMember[]
@@ -72,8 +72,8 @@ model EventMember {
   id        Int      @id @default(autoincrement())
   eventId   Int
   memberId  Int
-  createdAt DateTime @default(now())
-  updatedAt DateTime @default(now()) @updatedAt
+  createdAt DateTime @default(now()) @db.Timestamptz(3)
+  updatedAt DateTime @default(now()) @updatedAt @db.Timestamptz(3)
 
   event  Event  @relation(fields: [eventId], references: [id])
   member Member @relation(fields: [memberId], references: [id])
@@ -90,8 +90,9 @@ model OrganizationMembership {
   userId         Int
   organizationId Int
   role           OrganizationRole @default(MEMBER)
-  joinedAt       DateTime         @default(now())
-  updatedAt      DateTime         @default(now()) @updatedAt
+  joinedAt       DateTime         @default(now()) @db.Timestamptz(3)
+  createdAt      DateTime         @default(now()) @db.Timestamptz(3)
+  updatedAt      DateTime         @default(now()) @updatedAt @db.Timestamptz(3)
   User           User             @relation(fields: [userId], references: [id])
   Organization   Organization     @relation(fields: [organizationId], references: [id])
 }
