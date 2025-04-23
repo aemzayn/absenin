@@ -5,6 +5,12 @@ import * as controller from "../../controllers/members.controller";
 
 router.get("/", controller.getMembers);
 
-router.post("/register", controller.registerMembers);
+router.get("/:id", controller.getMemberById);
+
+router.post("/", controller.registerMembers);
+
+router.put("/:id", controller.updateMember);
+
+router.delete("/:id", controller.deleteMember);
 
 export default router;

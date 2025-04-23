@@ -3,7 +3,10 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "dev": "cross-env NODE_ENV=development nodemon --exec tsx src/index.ts"
+    "dev": "cross-env NODE_ENV=development nodemon --exec tsx src/index.ts",
+    "db:push": "prisma db push",
+    "db:generate": "prisma generate",
+    "db:migrate": "prisma migrate dev"
   },
   "keywords": [],
   "author": "",

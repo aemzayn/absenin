@@ -24,7 +24,16 @@ model User {
 }
 
 model Member {
+  id   Int    @id @default(autoincrement())
+  name String @db.VarChar(255)
+
+  qrcode Qrcode?
+}
+
+model Qrcode {
   id     Int    @id @default(autoincrement())
-  name   String @db.VarChar(255)
-  qrCode String
+  qrcode String @db.Text
+
+  member   Member @relation(fields: [memberId], references: [id])
+  memberId Int    @unique
 }

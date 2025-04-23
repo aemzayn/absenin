@@ -1,11 +1,45 @@
 import { NextFunction, Request, Response } from "express";
 import QRCode from "qrcode";
+import db from "../database";
 
-export function getMembers(req: Request, res: Response, next: NextFunction) {
+export async function getMembers(
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
   try {
-    res.status(200).json({
-      data: [],
+    const members = await db.member.findMany({
+      include: {
+        qrcode: true,
+      },
     });
+    res.status(200).json({
+      data: members,
+    });
+  } catch (error) {
+    next(error);
+  }
+}
+
+export async function getMemberById(
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
+  try {
+    const id = +req.params.id;
+    const member = await db.member.findUnique({
+      where: { id },
+    });
+
+    if (!member) {
+      res.status(404).json({
+        error: "Member not found",
+      });
+      return;
+    }
+
+    res.json({ data: member });
   } catch (error) {
     next(error);
   }
@@ -20,32 +54,116 @@ export async function registerMembers(
     const members = req.body;
 
     if (!members || !Array.isArray(members)) {
-      return res.status(400).json({
+      res.status(400).json({
         error: "Invalid input data",
       });
+      return;
     }
 
-    const data = [];
-    for (const member of members) {
-      const { name, email } = member;
-      const id = Math.floor(Math.random() * 1000);
-      const qrCodeData = {
-        id,
-        name,
-        email,
-      };
-      const qrCode = await QRCode.toDataURL(JSON.stringify(qrCodeData));
-      data.push({
-        id,
-        name,
-        email,
-        qrCode,
+    const createdMembers = await db.member.createManyAndReturn({
+      data: members.map((member) => ({
+        name: member.name,
+      })),
+    });
+
+    // create qrcode
+    const qrCodes = [];
+    const memberIds = [];
+    for (const member of createdMembers) {
+      const qrCode = await QRCode.toDataURL(
+        JSON.stringify({
+          memberId: member.id,
+          memberName: member.name,
+        })
+      );
+      qrCodes.push({
+        memberId: member.id,
+        qrcode: qrCode,
       });
+      memberIds.push(member.id);
     }
+
+    // save qrcode to db
+    await db.qrcode.createMany({
+      data: qrCodes,
+    });
+
+    const memberWithQRCode = await db.member.findMany({
+      where: {
+        id: {
+          in: memberIds,
+        },
+      },
+      include: {
+        qrcode: true,
+      },
+    });
 
     res.status(201).json({
-      data,
+      data: memberWithQRCode,
+      message: "Members registered successfully",
     });
+  } catch (error) {
+    next(error);
+  }
+}
+
+export async function updateMember({
+  req,
+  res,
+  next,
+}: {
+  req: Request;
+  res: Response;
+  next: NextFunction;
+}) {
+  try {
+    const id = +req.params.id;
+    const member = await db.member.findUnique({
+      where: { id },
+    });
+
+    if (!member) {
+      res.status(404).json({
+        error: "Member not found",
+      });
+      return;
+    }
+
+    const updatedMember = await db.member.update({
+      where: { id },
+      data: req.body,
+    });
+
+    res.json({ data: updatedMember });
+  } catch (error) {
+    next(error);
+  }
+}
+
+export async function deleteMember(
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
+  try {
+    const id = +req.params.id;
+    const member = await db.member.findUnique({
+      where: { id },
+    });
+
+    if (!member) {
+      res.status(404).json({
+        error: "Member not found",
+      });
+      return;
+    }
+
+    await db.member.delete({
+      where: { id },
+    });
+
+    res.status(204).send();
   } catch (error) {
     next(error);
   }
