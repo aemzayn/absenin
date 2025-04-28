@@ -1,5 +1,9 @@
 import { Link } from "react-router";
 
+export function meta() {
+  return [{ title: "Home" }];
+}
+
 export default function Home() {
   return (
     <div className="container mx-auto p-4">

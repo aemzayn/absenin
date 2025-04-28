@@ -1,6 +1,19 @@
+import { AxiosError } from "axios";
 import { Form, Link, redirect, type ActionFunctionArgs } from "react-router";
 import { ACCESS_TOKEN, REFRESH_TOKEN } from "~/api/constants";
+import { Button } from "~/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "~/components/ui/card";
+import { Input } from "~/components/ui/input";
+import { Label } from "~/components/ui/label";
 import type { User } from "~/interfaces/user";
+import { toast } from "sonner";
 import { AuthService } from "~/services/auth.service";
 
 export function meta() {
@@ -37,80 +50,61 @@ export async function clientAction({ request }: ActionFunctionArgs) {
     sessionStorage.setItem(REFRESH_TOKEN, refreshToken);
     sessionStorage.setItem(ACCESS_TOKEN, accessToken);
   } catch (error) {
-    console.error("Login error:", error);
+    if (error instanceof AxiosError) {
+      const status = error.response?.status;
+      if (status === 400) {
+        toast("Email atau kata sandi salah");
+      } else {
+        toast("Terjadi kesalahan saat login");
+      }
+    } else {
+      toast("Terjadi kesalahan saat login");
+    }
   }
 }
 
 export default function Login() {
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    // Handle login logic here
-    const form = event.currentTarget;
-    const formData = new FormData(form);
-    const email = formData.get("email");
-    const password = formData.get("password");
-
-    console.log(formData);
-
-    console.log({
-      email,
-      password,
-    });
-  };
-
   return (
-    <Form
-      className="w-md mx-auto bg-gray-50 p-10 rounded-xl shadow-lg flex flex-col gap-4"
-      method="post"
-    >
-      <h1 className="text-gray-900  mb-5 text-center">
-        Masuk dengan akun Anda
-      </h1>
-      <div>
-        <label
-          htmlFor="email"
-          className="block mb-2 text-sm font-medium text-gray-900"
-        >
-          Email
-        </label>
-        <input
-          type="email"
-          id="email"
-          name="email"
-          className="shadow-xs bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
-          required
-        />
-      </div>
-
-      <div>
-        <label
-          htmlFor="password"
-          className="block mb-2 text-sm font-medium text-gray-900"
-        >
-          Kata sandi
-        </label>
-        <input
-          type="password"
-          id="password"
-          name="password"
-          className="shadow-xs bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
-          required
-        />
-      </div>
-
-      <button type="submit">Login</button>
-
-      <div className="mt-5 text-center">
-        <p className="text-sm text-gray-500">
-          Belum punya akun?{" "}
-          <Link
-            to="/register"
-            className="font-medium text-blue-600 hover:underline dark:text-blue-500"
-          >
-            Daftar disini
-          </Link>
-        </p>
-      </div>
+    <Form className="w-md mx-auto rounded-xlß" method="post">
+      <Card className="w-full max-w-sm">
+        <CardHeader>
+          <CardTitle>Masuk ke akun mu</CardTitle>
+          <CardDescription>
+            Silahkan masukkan email dan password untuk masuk ke akun mu.
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="flex flex-col gap-6">
+            <div className="grid gap-2">
+              <Label htmlFor="email">Email</Label>
+              <Input
+                id="email"
+                name="email"
+                type="email"
+                placeholder="m@example.com"
+                required
+              />
+            </div>
+            <div className="grid gap-2">
+              <div className="flex items-center">
+                <Label htmlFor="password">Kata sandi</Label>
+              </div>
+              <Input id="password" type="password" name="password" required />
+            </div>
+          </div>
+        </CardContent>
+        <CardFooter className="flex-col gap-2">
+          <Button type="submit" className="w-full">
+            Login
+          </Button>
+          <div className="mt-4 text-center text-sm">
+            Belum punya akun?{" "}
+            <Link to="/register" className="underline underline-offset-4">
+              Daftar
+            </Link>
+          </div>
+        </CardFooter>
+      </Card>
     </Form>
   );
 }

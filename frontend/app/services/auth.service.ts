@@ -7,4 +7,20 @@ export class AuthService {
       password,
     });
   }
+
+  static async register({
+    email,
+    name,
+    password,
+  }: {
+    email: string;
+    name: string;
+    password: string;
+  }) {
+    return apiClient.post("/v1/auth/login", {
+      email,
+      name,
+      password,
+    });
+  }
 }

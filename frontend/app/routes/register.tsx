@@ -1,108 +1,110 @@
-import { Link } from "react-router";
+import { Form, Link, type ActionFunctionArgs } from "react-router";
+import { Button } from "~/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "~/components/ui/card";
+import { Input } from "~/components/ui/input";
+import { Label } from "~/components/ui/label";
+import { AuthService } from "~/services/auth.service";
 
-export default function RegisterPage() {
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    // Handle login logic here
-    const form = event.currentTarget;
-    const formData = new FormData(form);
-    const email = formData.get("email");
-    const password = formData.get("password");
+export function meta() {
+  return [{ title: "Daftar Akun" }];
+}
 
-    console.log(formData);
+export async function clientAction({ request }: ActionFunctionArgs) {
+  const formData = await request.formData();
+  const email = formData.get("email") as string;
+  const name = formData.get("name") as string;
+  const password = formData.get("password") as string;
+  const confirmPassword = formData.get("confirmPassword") as string;
 
-    console.log({
+  if (!email || !name || !password || !confirmPassword) {
+    throw new Error("Semua kolom harus diisi");
+  }
+
+  if (password !== confirmPassword) {
+    throw new Error("Kata sandi tidak cocok");
+  }
+
+  try {
+    const res = await AuthService.register({
       email,
+      name,
       password,
     });
-  };
+    const data = res.data;
+    // Call your registration API here
+    console.log("Registering user:", { email, password });
+  } catch (error) {
+    console.error("Registration error:", error);
+  }
+}
 
+export default function RegisterPage() {
   return (
-    <form
-      className="w-md mx-auto bg-gray-50 p-10 rounded-xl shadow-lg flex flex-col gap-4"
-      onSubmit={handleSubmit}
-    >
-      <h1 className="text-gray-900 mb-5 text-center">Daftar akun baru</h1>
+    <Form className="w-md mx-auto rounded-xlß" method="post">
+      <Card className="w-full max-w-sm">
+        <CardHeader>
+          <CardTitle>Daftar</CardTitle>
+          <CardDescription>Buat akun baru.</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="flex flex-col gap-6">
+            <div className="grid gap-2">
+              <Label htmlFor="email">Email</Label>
+              <Input
+                id="email"
+                name="email"
+                type="email"
+                placeholder="m@example.com"
+                required
+              />
+            </div>
 
-      <div>
-        <label
-          htmlFor="email"
-          className="block mb-2 text-sm font-medium text-gray-900"
-        >
-          Email
-        </label>
-        <input
-          type="email"
-          id="email"
-          name="email"
-          className="shadow-xs bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
-          required
-        />
-      </div>
+            <div className="grid gap-2">
+              <div className="flex items-center">
+                <Label htmlFor="name">Nama lengkap</Label>
+              </div>
+              <Input id="name" type="text" name="name" required />
+            </div>
 
-      <div>
-        <div>
-          <label
-            htmlFor="name"
-            className="block mb-2 text-sm font-medium text-gray-900"
-          >
-            Nama lengkap
-          </label>
-          <input
-            type="text"
-            id="name"
-            name="name"
-            className="shadow-xs bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
-            required
-          />
-        </div>
-      </div>
+            <div className="grid gap-2">
+              <div className="flex items-center">
+                <Label htmlFor="password">Kata sandi</Label>
+              </div>
+              <Input id="password" type="password" name="password" required />
+            </div>
 
-      <div>
-        <label
-          htmlFor="password"
-          className="block mb-2 text-sm font-medium text-gray-900"
-        >
-          Kata sandi
-        </label>
-        <input
-          type="password"
-          id="password"
-          name="password"
-          className="shadow-xs bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
-          required
-        />
-      </div>
-
-      <div>
-        <label
-          htmlFor="confirm-password"
-          className="block mb-2 text-sm font-medium text-gray-900"
-        >
-          Konfirmasi kata sandi
-        </label>
-        <input
-          type="password"
-          id="confirm-password"
-          name="confirm-password"
-          className="shadow-xs bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
-          required
-        />
-      </div>
-
-      <button type="submit">Daftar</button>
-
-      <div className="mt-5 text-center">
-        <p className="text-sm text-gray-500">
-          Sudah punya akun?{" "}
-          <Link
-            to="/login"
-            className="font-medium text-blue-600 hover:underline dark:text-blue-500"
-          >
-            Masuk sekarang
-          </Link>
-        </p>
-      </div>
-    </form>
+            <div className="grid gap-2">
+              <div className="flex items-center">
+                <Label htmlFor="confirmPassword">Konfirmasi kata sandi</Label>
+              </div>
+              <Input
+                id="confirmPassword"
+                type="password"
+                name="confirmPassword"
+                required
+              />
+            </div>
+          </div>
+        </CardContent>
+        <CardFooter className="flex-col gap-2">
+          <Button type="submit" className="w-full">
+            Daftar
+          </Button>
+          <div className="mt-4 text-center text-sm">
+            Sudah punya akun?{" "}
+            <Link to="/login" className="underline underline-offset-4">
+              Masuk
+            </Link>
+          </div>
+        </CardFooter>
+      </Card>
+    </Form>
   );
 }
