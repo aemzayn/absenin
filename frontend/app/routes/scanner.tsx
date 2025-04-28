@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { QrReader } from "~/components/qr-reader";
+import { QrReader } from "~/components/qr-reader/qr-reader";
 
 export function meta() {
   return [
