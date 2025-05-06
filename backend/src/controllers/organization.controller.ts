@@ -115,3 +115,49 @@ export async function updateOrganization(
     next(error);
   }
 }
+
+export async function getOrganizationById(
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
+  try {
+    const id = +req.params.id;
+
+    const organization = await db.organization.findUnique({
+      where: { id },
+    });
+
+    if (!organization) {
+      res.status(404).json({ message: "Organization not found" });
+      return;
+    }
+
+    res.status(200).json({ data: organization });
+  } catch (error) {
+    next(error);
+  }
+}
+
+export async function deleteOrganizationById(
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
+  try {
+    const id = +req.params.id;
+
+    const organization = await db.organization.delete({
+      where: { id },
+    });
+
+    if (!organization) {
+      res.status(404).json({ message: "Organization not found" });
+      return;
+    }
+
+    res.status(200).json({ data: organization });
+  } catch (error) {
+    next(error);
+  }
+}

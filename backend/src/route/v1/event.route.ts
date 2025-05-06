@@ -9,6 +9,8 @@ router.use(authMiddleware);
 
 router.get("/", controller.getUpcomingEvents);
 
+router.get("/:eventId/attendees", controller.getEventAttendees);
+
 router.post("/", controller.createEvent);
 
 export default router;

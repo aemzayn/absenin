@@ -9,8 +9,12 @@ router.use(authMiddleware);
 
 router.get("/", controller.getMyOrganizations);
 
+router.get("/:id", controller.getOrganizationById);
+
 router.post("/", controller.createOrganization);
 
 router.put("/:id", controller.updateOrganization);
+
+router.delete("/:id", controller.deleteOrganizationById);
 
 export default router;

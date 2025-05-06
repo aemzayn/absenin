@@ -6,4 +6,6 @@ const router = Router();
 
 router.get("/:memberId", controller.getQRCode);
 
+router.post("/sign", controller.signQrCode);
+
 export default router;

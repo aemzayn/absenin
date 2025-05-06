@@ -43,6 +43,88 @@ export async function getUpcomingEvents(
   }
 }
 
+export async function getEventAttendees(
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
+  try {
+    const eventId = req.params.eventId;
+
+    const event = await db.event.findUnique({
+      where: {
+        id: +eventId,
+      },
+      include: {
+        Organization: {
+          include: {
+            members: {
+              select: {
+                id: true,
+                name: true,
+              },
+            },
+          },
+        },
+      },
+    });
+
+    if (!event) {
+      res.status(404).json({ message: "Event not found" });
+      return;
+    }
+
+    const attendees = await db.eventMember.findMany({
+      where: {
+        eventId: +eventId,
+      },
+      include: {
+        member: {
+          select: {
+            id: true,
+            name: true,
+            EventMember: {
+              select: {
+                createdAt: true,
+              },
+            },
+          },
+        },
+      },
+    });
+
+    const attendeedIds: { [key: number]: boolean } = {};
+    for (const attendee of attendees) {
+      console.log(attendee);
+      attendeedIds[attendee.memberId] = true;
+    }
+
+    const members = event.Organization?.members ?? [];
+
+    const allMembers = [];
+    for (const member of members) {
+      const attended = attendeedIds[member.id] || false;
+      allMembers.push({
+        ...member,
+        attended,
+      });
+    }
+
+    // order by the attended status and name
+    allMembers.sort((a, b) => {
+      if (a.attended && !b.attended) return -1;
+      if (!a.attended && b.attended) return 1;
+      return a.name.localeCompare(b.name);
+    });
+
+    res.status(200).json({
+      data: allMembers,
+    });
+  } catch (error) {
+    next(error);
+  }
+}
+
 export async function createEvent(
   req: Request,
   res: Response,
