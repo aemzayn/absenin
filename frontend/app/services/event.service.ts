@@ -8,4 +8,8 @@ export class EventService {
   static async getEventAttendees(eventId: number) {
     return apiClient.get(`/v1/events/${eventId}/attendees`);
   }
+
+  static async getUpcomingEventsByOrganization(organizationId: number) {
+    return apiClient.get(`/v1/events/organization/${organizationId}`);
+  }
 }

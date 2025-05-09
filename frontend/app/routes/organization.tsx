@@ -1,5 +1,4 @@
 import { OrganizationService } from "~/services/organization.service";
-import type { Route } from "./+types/organization";
 import type { Organization } from "~/interfaces/organization";
 import { Button } from "~/components/ui/button";
 import { useState } from "react";
@@ -49,8 +48,6 @@ export default function OrganizationPage() {
 
   return (
     <div>
-      <OrganizationList organizations={organizations} />
-
       <Dialog open={showForm} onOpenChange={setShowForm}>
         {totalOrganizations === 0 && (
           <div className="flex flex-col items-center justify-center">
@@ -58,14 +55,14 @@ export default function OrganizationPage() {
             <p className="text-gray-500">
               You are not a member of any organizations.
             </p>
-
-            <DialogTrigger asChild>
-              <Button className="mt-4" size={"sm"}>
-                Create Organization
-              </Button>
-            </DialogTrigger>
           </div>
         )}
+
+        <DialogTrigger asChild>
+          <Button className="mt-4" size={"sm"}>
+            Create Organization
+          </Button>
+        </DialogTrigger>
 
         <DialogContent>
           <DialogHeader>
@@ -77,6 +74,10 @@ export default function OrganizationPage() {
           />
         </DialogContent>
       </Dialog>
+
+      <div className="mt-4">
+        <OrganizationList organizations={organizations} />
+      </div>
     </div>
   );
 }

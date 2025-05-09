@@ -17,8 +17,8 @@ export async function getMyOrganizations(
           },
         },
       },
-      include: {
-        events: {},
+      orderBy: {
+        name: "asc",
       },
     });
 

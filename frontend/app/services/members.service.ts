@@ -6,8 +6,15 @@ export class MembersService {
     return apiClient.get("/v1/members");
   }
 
-  static async createMembers(members: Member[]) {
-    return apiClient.post("/v1/members", members);
+  static async getMembersByOrganization(organizationId: number) {
+    return apiClient.get("/v1/members/organization/" + organizationId);
+  }
+
+  static async createMembers(
+    organizationId: number,
+    members: Partial<Member>[]
+  ) {
+    return apiClient.post("/v1/members", { organizationId, members });
   }
 
   static async updateMemberById(id: number, member: Member) {

@@ -43,6 +43,43 @@ export async function getUpcomingEvents(
   }
 }
 
+export async function getUpcomingEventsByOrganization(
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
+  try {
+    const organizationId = +req.params.organizationId;
+    const userId = req.user!.id;
+    const timezone =
+      (req.headers["x-timezone"] as string) || config.DEFAULT_TIMEZONE;
+
+    const today = dayjs().tz(timezone).startOf("day");
+    const todayUtc = today.utc().toDate();
+
+    const events = await db.event.findMany({
+      where: {
+        date: { gte: todayUtc },
+        Organization: {
+          id: organizationId,
+          OrganizationMembership: {
+            some: {
+              userId: userId,
+            },
+          },
+        },
+      },
+      orderBy: {
+        date: "asc",
+      },
+    });
+
+    res.status(200).json({ data: events });
+  } catch (error) {
+    next(error);
+  }
+}
+
 export async function getEventAttendees(
   req: Request,
   res: Response,

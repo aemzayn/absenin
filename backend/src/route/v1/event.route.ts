@@ -9,6 +9,11 @@ router.use(authMiddleware);
 
 router.get("/", controller.getUpcomingEvents);
 
+router.get(
+  "/organization/:organizationId",
+  controller.getUpcomingEventsByOrganization
+);
+
 router.get("/:eventId/attendees", controller.getEventAttendees);
 
 router.post("/", controller.createEvent);

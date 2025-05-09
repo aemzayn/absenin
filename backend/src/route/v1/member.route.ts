@@ -5,6 +5,11 @@ import * as controller from "../../controllers/member.controller";
 
 router.get("/", controller.getMembers);
 
+router.get(
+  "/organization/:organizationId",
+  controller.getMembersByOrganization
+);
+
 router.get("/:id", controller.getMemberById);
 
 router.post("/", controller.registerMembers);

@@ -18,14 +18,10 @@ export default [
       route(":eventId/scan", "routes/event-qr-scanner.tsx"),
     ]),
 
-    route("organization", "routes/organization.tsx", []),
-
-    // ...prefix("organization", [
-    // index("routes/organization.tsx"),
-    // route(":organizationId", "routes/organization.tsx"),
-    // route(":organizationId/members", "routes/organization-members.tsx"),
-    // route(":organizationId/events", "routes/organization-events.tsx"),
-    // ]),
+    ...prefix("organization", [
+      index("routes/organization.tsx"),
+      route(":organizationId", "routes/organization-detail.tsx"),
+    ]),
   ]),
 
   layout("routes/auth.tsx", [

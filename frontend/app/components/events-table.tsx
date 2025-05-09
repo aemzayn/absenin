@@ -1,0 +1,72 @@
+import { useEffect, useState } from "react";
+import { toast } from "sonner";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "~/components/ui/table";
+import { type Event } from "~/interfaces/event";
+import { dateToString } from "~/lib/date-format";
+import { EventService } from "~/services/event.service";
+import { Button } from "./ui/button";
+
+type Props = {
+  organizationId: number;
+};
+
+export const EventsTable = ({ organizationId }: Props) => {
+  const [events, setEvents] = useState<Event[]>([]);
+
+  useEffect(() => {
+    const fetchEvents = async () => {
+      if (!organizationId) {
+        setEvents([]);
+        return;
+      }
+      try {
+        const res = await EventService.getUpcomingEventsByOrganization(
+          organizationId
+        );
+        const events: Event[] = res.data.data;
+        setEvents(events);
+      } catch (error) {
+        toast.error("Error getting events");
+        setEvents([]);
+      }
+    };
+
+    fetchEvents();
+  }, [organizationId]);
+
+  return (
+    <div className="flex flex-col gap-2 items-start">
+      <Button className="bg-blue-200" onClick={() => {}} size={"sm"}>
+        Add event
+      </Button>
+      <Table className="border">
+        <TableHeader>
+          <TableRow className="bg-blue-500 hover:bg-blue-500">
+            <TableHead>Name</TableHead>
+            <TableHead>Description</TableHead>
+            <TableHead>Location</TableHead>
+            <TableHead>Date</TableHead>
+          </TableRow>
+        </TableHeader>
+
+        <TableBody>
+          {events.map((event: Event) => (
+            <TableRow key={event.id} className="bg-blue-200 hover:bg-blue-300">
+              <TableCell className="font-base">{event.name}</TableCell>
+              <TableCell>{event.description}</TableCell>
+              <TableCell>{event.location}</TableCell>
+              <TableCell>{dateToString(event.date)}</TableCell>
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
+    </div>
+  );
+};

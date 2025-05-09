@@ -35,6 +35,33 @@ export async function getMembers(
   }
 }
 
+export async function getMembersByOrganization(
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
+  try {
+    const organizationId = +req.params.organizationId;
+
+    const members = await db.member.findMany({
+      include: {
+        qrcode: true,
+      },
+      where: {
+        organizationId,
+      },
+      orderBy: {
+        name: "asc",
+      },
+    });
+    res.status(200).json({
+      data: members,
+    });
+  } catch (error) {
+    next(error);
+  }
+}
+
 export async function getMemberById(
   req: Request,
   res: Response,
@@ -125,15 +152,11 @@ export async function registerMembers(
   }
 }
 
-export async function updateMember({
-  req,
-  res,
-  next,
-}: {
-  req: Request;
-  res: Response;
-  next: NextFunction;
-}) {
+export async function updateMember(
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
   try {
     const id = +req.params.id;
     const member = await db.member.findUnique({
@@ -149,7 +172,9 @@ export async function updateMember({
 
     const updatedMember = await db.member.update({
       where: { id },
-      data: req.body,
+      data: {
+        name: req.body.name,
+      },
     });
 
     res.json({ data: updatedMember });
