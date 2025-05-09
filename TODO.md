@@ -1,6 +1,6 @@
 # Frontend
 
-- [ ] Login page
+- [x] Login page
 - [ ] Register or add user page
 - [ ] User profile page
 - [ ] Members page

@@ -38,6 +38,9 @@ export async function clientAction({ request }: ActionFunctionArgs) {
       password,
     });
     const data = res.data;
+
+    console.log(data);
+
     // Call your registration API here
     console.log("Registering user:", { email, password });
   } catch (error) {

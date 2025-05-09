@@ -17,7 +17,7 @@ export class AuthService {
     name: string;
     password: string;
   }) {
-    return apiClient.post("/v1/auth/login", {
+    return apiClient.post("/v1/auth/register", {
       email,
       name,
       password,
