@@ -9,3 +9,10 @@ export type Organization = {
   createdAt: string;
   updatedAt: string;
 };
+
+export type CreateOrganization = Omit<
+  Organization,
+  "id" | "createdAt" | "updatedAt"
+>;
+
+export type UpdateOrganization = Partial<CreateOrganization>;

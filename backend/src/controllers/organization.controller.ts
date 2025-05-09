@@ -17,6 +17,9 @@ export async function getMyOrganizations(
           },
         },
       },
+      include: {
+        events: {},
+      },
     });
 
     res.status(200).json({ data: organizations });

@@ -17,6 +17,15 @@ export default [
       route(":eventId/attendees", "routes/event-attendees.tsx"),
       route(":eventId/scan", "routes/event-qr-scanner.tsx"),
     ]),
+
+    route("organization", "routes/organization.tsx", []),
+
+    // ...prefix("organization", [
+    // index("routes/organization.tsx"),
+    // route(":organizationId", "routes/organization.tsx"),
+    // route(":organizationId/members", "routes/organization-members.tsx"),
+    // route(":organizationId/events", "routes/organization-events.tsx"),
+    // ]),
   ]),
 
   layout("routes/auth.tsx", [

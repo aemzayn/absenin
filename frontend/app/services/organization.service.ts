@@ -1,9 +1,8 @@
 import apiClient from "~/api/client";
-import type { Organization } from "~/interfaces/organization";
-
-type CreateOrganization = Omit<Organization, "id" | "createdAt" | "updatedAt">;
-
-type UpdateOrganization = Partial<CreateOrganization>;
+import type {
+  CreateOrganization,
+  UpdateOrganization,
+} from "~/interfaces/organization";
 
 export class OrganizationService {
   static async getMyOrganizations() {
