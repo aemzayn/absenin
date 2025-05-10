@@ -1,7 +1,6 @@
 import QrScanner from "qr-scanner";
 import QrFrame from "~/assets/qr-frame.svg";
 import { useEffect, useRef, useState } from "react";
-import "./qr-reader.css";
 
 type Props = {
   onScanSuccess?: (result: QrScanner.ScanResult) => void;
@@ -67,15 +66,24 @@ export function QrReader({
   }, [qrOn]);
 
   return (
-    <div className="qr-reader">
-      <video ref={videoEl} autoPlay muted playsInline></video>
-      <div ref={qrBoxEl} className="qr-box">
+    <div className="md:w-[400px] w-full h-[500px] relative mx-auto border-3 rounded-lg overflow-hidden bg-gray-200">
+      <video
+        className="h-full w-full object-cover"
+        ref={videoEl}
+        autoPlay
+        muted
+        playsInline
+      ></video>
+      <div
+        ref={qrBoxEl}
+        className="absolute inset-0 flex items-center justify-center"
+      >
         <img
           src={QrFrame}
           alt="Qr Frame"
           width={256}
           height={256}
-          className="qr-frame"
+          className=""
         />
       </div>
     </div>
