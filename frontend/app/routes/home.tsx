@@ -1,7 +1,7 @@
 import type { Route } from "./+types/home";
 import { EventService } from "~/services/event.service";
-import { EventCardHome } from "~/components/event-card-home";
 import type { Event } from "~/interfaces/event";
+import { EventListHome } from "~/components/event-list-home";
 
 export function meta() {
   return [{ title: "Home" }];
@@ -10,33 +10,15 @@ export function meta() {
 export async function clientLoader() {
   const res = await EventService.getUpcomingEvents();
   const events = res.data.data ?? [];
-
-  return {
-    events,
-  };
+  return { events };
 }
 
 export default function Home({ loaderData }: Route.ComponentProps) {
   const events: Event[] = loaderData.events;
-  const totalEvents = events.length;
 
   return (
     <div className="container mx-auto p-4">
-      <div className="mt-4 flex flex-col gap-4">
-        {totalEvents === 0 && (
-          <div className="flex flex-col items-center justify-center">
-            <h2 className="text-lg font-semibold">Tidak ada acara</h2>
-            <p className="text-gray-500">
-              Saat ini tidak ada acara yang tersedia. Silahkan membuat acara
-              baru.
-            </p>
-          </div>
-        )}
-
-        {events.map((event: Event) => (
-          <EventCardHome key={event.id} event={event} />
-        ))}
-      </div>
+      <EventListHome events={events} />
     </div>
   );
 }

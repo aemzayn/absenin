@@ -8,6 +8,10 @@ export type Event = {
   location?: String;
   organizationId: number;
   members?: Member[];
+  Organization?: {
+    id: number;
+    name: String;
+  };
 };
 
 export type CreateEvent = Pick<Event, "name"> &

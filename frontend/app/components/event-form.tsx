@@ -39,6 +39,7 @@ export const EventForm = ({ organizationId, onCreate, onFailure }: Props) => {
       const res = await EventService.createEvent({
         name,
         location,
+        date: dayjs(date).startOf("day").toDate(),
         description,
         organizationId,
       });

@@ -32,6 +32,14 @@ export async function getUpcomingEvents(
           },
         },
       },
+      include: {
+        Organization: {
+          select: {
+            id: true,
+            name: true,
+          },
+        },
+      },
       orderBy: {
         date: "asc",
       },
