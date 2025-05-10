@@ -6,7 +6,8 @@ import { LogOut } from "lucide-react";
 
 export default function Navbar() {
   const isHome = useMatch("/") != null;
-  const isOrganization = useMatch("/organization") != null;
+  const isEvent = useMatch("/event/*") != null;
+  const isOrganization = useMatch("/organization/*") != null;
 
   const navigate = useNavigate();
 
@@ -25,7 +26,7 @@ export default function Navbar() {
     <div className="">
       <div className="container mx-auto p-4 flex items-center justify-between">
         <div className="flex items-center gap-5 font-bold">
-          <Link to="/" className={className(isHome)}>
+          <Link to="/" className={className(isHome || isEvent)}>
             Daftar Acara
           </Link>
 

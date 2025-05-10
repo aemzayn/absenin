@@ -1,6 +1,8 @@
 import { EventService } from "~/services/event.service";
 import type { Route } from "./+types/event-attendees";
 import DataTableDemo from "~/components/attendance-table";
+import type { Attendee } from "~/interfaces/attendee";
+import { AttendeesTable } from "~/components/attendees-table";
 
 export function meta() {
   return [{ title: "Daftar Hadir" }];
@@ -24,12 +26,6 @@ const PersonCard = ({ name, id }: { name: string; id: number }) => {
   );
 };
 
-type Attendee = {
-  id: number;
-  name: string;
-  attended: boolean;
-};
-
 export async function clientLoader({ params }: Route.ClientLoaderArgs) {
   const eventId = +params.eventId;
 
@@ -46,7 +42,7 @@ export async function clientLoader({ params }: Route.ClientLoaderArgs) {
 export default function EventAttendeesPage({
   loaderData,
 }: Route.ComponentProps) {
-  const { attendees } = loaderData;
+  const attendees: Attendee[] = loaderData.attendees;
 
   return (
     <div>
@@ -54,6 +50,8 @@ export default function EventAttendeesPage({
       <p className="mt-2 text-gray-600">
         Here you can view the list of attendees for the event.
       </p>
+
+      <AttendeesTable attendees={attendees} />
 
       {/* <div>
         {attendees.length === 0 ? (
@@ -66,7 +64,7 @@ export default function EventAttendeesPage({
           </div>
         )}
       </div> */}
-      <DataTableDemo />
+      {/* <DataTableDemo /> */}
     </div>
   );
 }

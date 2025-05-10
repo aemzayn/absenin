@@ -20,6 +20,9 @@ export function EventCardHome({ event }: Props) {
   const eventLocation = event.location ?? "-";
   const eventDate = dateToString(event.date);
 
+  const today = new Date();
+  const isToday = new Date(event.date).getDate() === today.getDate();
+
   return (
     <Card className="w-full max-w-sm bg-white gap-1">
       <CardHeader>

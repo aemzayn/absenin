@@ -10,7 +10,6 @@ export const groupEvents = (events: Event[]) => {
 
   for (const event of events) {
     const eventDate = new Date(event.date);
-    console.log(event.name, eventDate.getDate() === todayDate);
 
     if (eventDate.getDate() === todayDate) {
       todayEvents.push(event);
