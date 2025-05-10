@@ -88,6 +88,31 @@ export async function getUpcomingEventsByOrganization(
   }
 }
 
+export async function getEvent(
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
+  try {
+    const eventId = +req.params.eventId;
+
+    const event = await db.event.findUnique({
+      where: {
+        id: eventId,
+      },
+    });
+
+    if (!event) {
+      res.status(404).json({ message: "Event not found" });
+      return;
+    }
+
+    res.status(200).json({ data: event });
+  } catch (error) {
+    next(error);
+  }
+}
+
 export async function getEventAttendees(
   req: Request,
   res: Response,

@@ -7,7 +7,7 @@
 - [x] Delete member
 - [x] Edit member
 - [x] Member table pagination
-- [ ] Create event page
+- [x] Create event page
 - [ ] Edit event page
 - [ ] Delete event
 - [ ] Event table pagination

@@ -9,7 +9,6 @@ export default function EventQrScannerPage() {
       <p className="mt-2 text-gray-600">
         Here you can scan the QR code for the event.
       </p>
-      {/* Add your QR scanner logic here */}
     </div>
   );
 }

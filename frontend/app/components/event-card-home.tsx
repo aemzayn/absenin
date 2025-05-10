@@ -40,7 +40,7 @@ export function EventCardHome({ event }: Props) {
         </p>
       </CardContent>
       <CardFooter className="flex-col gap-2 mt-auto">
-        <Link to={`/event/${event.id}/scan`} className="w-full">
+        <Link to={`/scanner/${event.id}`} className="w-full">
           <Button variant="default" className="w-full">
             <ScanQrCode /> Scan QR Code
           </Button>

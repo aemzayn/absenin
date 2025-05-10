@@ -6,6 +6,10 @@ export class EventService {
     return apiClient.get("/v1/events");
   }
 
+  static async getEvent(eventId: number) {
+    return apiClient.get(`/v1/events/${eventId}`);
+  }
+
   static async createEvent(event: CreateEvent) {
     return apiClient.post("/v1/events", event);
   }

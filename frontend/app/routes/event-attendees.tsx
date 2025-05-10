@@ -52,19 +52,6 @@ export default function EventAttendeesPage({
       </p>
 
       <AttendeesTable attendees={attendees} />
-
-      {/* <div>
-        {attendees.length === 0 ? (
-          <p className="mt-4 text-gray-500">No attendees found.</p>
-        ) : (
-          <div className="mt-4">
-            {attendees.map((attendee) => (
-              <PersonCard key={attendee.id} {...attendee} />
-            ))}
-          </div>
-        )}
-      </div> */}
-      {/* <DataTableDemo /> */}
     </div>
   );
 }

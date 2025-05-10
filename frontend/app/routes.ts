@@ -10,7 +10,7 @@ export default [
   layout("routes/protected.tsx", [
     index("routes/home.tsx"),
     route("members", "routes/members.tsx"),
-    route("scanner", "routes/scanner.tsx"),
+    route("scanner/:eventId", "routes/scanner.tsx"),
 
     ...prefix("event", [
       route(":eventId", "routes/event.tsx"),
