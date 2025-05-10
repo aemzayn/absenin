@@ -9,3 +9,6 @@ export type Event = {
 
   members?: Member[];
 };
+
+export type CreateEvent = Pick<Event, "name"> &
+  Partial<Pick<Event, "description" | "location" | "date">>;

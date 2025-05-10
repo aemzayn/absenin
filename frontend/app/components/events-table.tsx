@@ -12,6 +12,14 @@ import { type Event } from "~/interfaces/event";
 import { dateToString } from "~/lib/date-format";
 import { EventService } from "~/services/event.service";
 import { Button } from "./ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTrigger,
+} from "./ui/dialog";
+import { EventForm } from "./event-form";
+import { DialogTitle } from "@radix-ui/react-dialog";
 
 type Props = {
   organizationId: number;
@@ -19,6 +27,7 @@ type Props = {
 
 export const EventsTable = ({ organizationId }: Props) => {
   const [events, setEvents] = useState<Event[]>([]);
+  const [showForm, setShowForm] = useState(false);
 
   useEffect(() => {
     const fetchEvents = async () => {
@@ -43,9 +52,21 @@ export const EventsTable = ({ organizationId }: Props) => {
 
   return (
     <div className="flex flex-col gap-2 items-start">
-      <Button className="bg-blue-200" onClick={() => {}} size={"sm"}>
-        Tambah acara
-      </Button>
+      <Dialog open={showForm} onOpenChange={setShowForm}>
+        <DialogTrigger asChild>
+          <Button className="bg-blue-200" onClick={() => {}} size={"sm"}>
+            Tambah acara
+          </Button>
+        </DialogTrigger>
+
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Buat acara baru</DialogTitle>
+          </DialogHeader>
+          <EventForm />
+        </DialogContent>
+      </Dialog>
+
       <Table className="border">
         <TableHeader>
           <TableRow className="bg-blue-500 hover:bg-blue-500">
