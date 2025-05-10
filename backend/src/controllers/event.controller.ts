@@ -235,3 +235,62 @@ export async function createEvent(
     next(error);
   }
 }
+
+export async function updateEvent(
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
+  try {
+    const eventId = +req.params.eventId;
+    const { name, description, date, location } = req.body;
+
+    const eventDate = dayjs(date).tz(config.DEFAULT_TIMEZONE).toDate();
+
+    const event = await db.event.update({
+      where: {
+        id: eventId,
+      },
+      data: {
+        name,
+        date: eventDate,
+        location,
+        description,
+      },
+    });
+
+    res.status(200).json({ data: event });
+  } catch (error) {
+    next(error);
+  }
+}
+
+export async function deleteEvent(
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
+  try {
+    const userId = req.user!.id;
+    const eventId = +req.params.eventId;
+
+    const event = await db.event.delete({
+      where: {
+        id: eventId,
+        AND: {
+          Organization: {
+            OrganizationMembership: {
+              some: {
+                userId: userId,
+              },
+            },
+          },
+        },
+      },
+    });
+
+    res.status(200).json({ data: event });
+  } catch (error) {
+    next(error);
+  }
+}

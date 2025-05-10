@@ -30,6 +30,7 @@ import { SortIcon } from "./icons/sort-icon";
 import { QrCodeIcon } from "lucide-react";
 import { useSkipper } from "~/hooks/use-skipper";
 import { NewMemberForm } from "./new-member-form";
+import { Pagination } from "./pagination";
 
 type Props = {
   organizationId: number;
@@ -323,26 +324,12 @@ export const MembersTable = ({ organizationId }: Props) => {
         </Table>
       </div>
 
-      <div className="flex items-center justify-end space-x-2 py-4">
-        <div className="space-x-2">
-          <Button
-            variant="noShadow"
-            size="sm"
-            onClick={() => table.previousPage()}
-            disabled={!table.getCanPreviousPage()}
-          >
-            Previous
-          </Button>
-          <Button
-            variant="noShadow"
-            size="sm"
-            onClick={() => table.nextPage()}
-            disabled={!table.getCanNextPage()}
-          >
-            Next
-          </Button>
-        </div>
-      </div>
+      <Pagination
+        goLeft={() => table.previousPage()}
+        goRight={() => table.nextPage()}
+        leftButtonDisabled={!table.getCanPreviousPage()}
+        rightButtonDisabled={!table.getCanNextPage()}
+      />
     </>
   );
 };

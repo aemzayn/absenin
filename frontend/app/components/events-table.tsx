@@ -36,6 +36,8 @@ import {
 } from "@tanstack/react-table";
 import { SortIcon } from "./icons/sort-icon";
 import { Input } from "./ui/input";
+import { EditEventForm } from "./edit-event-form";
+import { Pagination } from "./pagination";
 
 type Props = {
   organizationId: number;
@@ -67,7 +69,9 @@ export const EventsTable = ({ organizationId }: Props) => {
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
   const [rowSelection, setRowSelection] = useState({});
   const [events, setEvents] = useState<Event[]>([]);
-  const [showForm, setShowForm] = useState(false);
+  const [showCreateForm, setShowCreateForm] = useState(false);
+  const [showEditForm, setShowEditForm] = useState(false);
+  const [selectedEventId, setSelectedEventId] = useState<number | null>(null);
 
   const columns: ColumnDef<Event>[] = [
     {
@@ -88,6 +92,27 @@ export const EventsTable = ({ organizationId }: Props) => {
       cell: ({ row }) => {
         const date = row.getValue("date") as Date;
         return <span>{dateToString(date)}</span>;
+      },
+    },
+    {
+      accessorKey: "actions",
+      header: "",
+      cell: ({ row }) => {
+        const event = row.original;
+        return (
+          <div className="flex items-center gap-2">
+            <Button
+              size="sm"
+              className="bg-green-400"
+              onClick={() => {
+                setSelectedEventId(event.id);
+                setShowEditForm(true);
+              }}
+            >
+              Edit
+            </Button>
+          </div>
+        );
       },
     },
   ];
@@ -134,18 +159,26 @@ export const EventsTable = ({ organizationId }: Props) => {
 
   const onEventCreated = (event: Event) => {
     setEvents((prevEvents) => [...prevEvents, event]);
-    toast.success("Event created successfully");
-    setShowForm(false);
+    setShowCreateForm(false);
   };
 
-  const onEventCreationFailed = (error: Error) => {
-    toast.error("Error creating event");
-    console.error("Error creating event:", error);
+  const onEventUpdated = (updatedEvent: Event) => {
+    setEvents((prevEvents) =>
+      prevEvents.map((event) =>
+        event.id === updatedEvent.id ? updatedEvent : event
+      )
+    );
+    setShowEditForm(false);
+  };
+
+  const onEventDelete = (deletedId: number) => {
+    setEvents((prev) => prev.filter((event) => event.id !== deletedId));
+    setShowEditForm(false);
   };
 
   return (
     <>
-      <Dialog open={showForm} onOpenChange={setShowForm}>
+      <Dialog open={showCreateForm} onOpenChange={setShowCreateForm}>
         <div className="flex items-center justify-between w-full gap-2 mb-2">
           <DialogTrigger asChild>
             <Button className="bg-blue-200" onClick={() => {}} size={"sm"}>
@@ -170,7 +203,6 @@ export const EventsTable = ({ organizationId }: Props) => {
           <CreateEventForm
             organizationId={organizationId}
             onCreate={onEventCreated}
-            onFailure={onEventCreationFailed}
           />
         </DialogContent>
       </Dialog>
@@ -231,26 +263,26 @@ export const EventsTable = ({ organizationId }: Props) => {
         </Table>
       </div>
 
-      <div className="flex items-center justify-end space-x-2 py-4">
-        <div className="space-x-2">
-          <Button
-            variant="noShadow"
-            size="sm"
-            onClick={() => table.previousPage()}
-            disabled={!table.getCanPreviousPage()}
-          >
-            Previous
-          </Button>
-          <Button
-            variant="noShadow"
-            size="sm"
-            onClick={() => table.nextPage()}
-            disabled={!table.getCanNextPage()}
-          >
-            Next
-          </Button>
-        </div>
-      </div>
+      <Pagination
+        goLeft={() => table.previousPage()}
+        goRight={() => table.nextPage()}
+        leftButtonDisabled={!table.getCanPreviousPage()}
+        rightButtonDisabled={!table.getCanNextPage()}
+      />
+
+      <Dialog open={showEditForm} onOpenChange={setShowEditForm}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Edit acara</DialogTitle>
+          </DialogHeader>
+          <EditEventForm
+            eventId={selectedEventId}
+            organizationId={organizationId}
+            onUpdate={onEventUpdated}
+            onDelete={onEventDelete}
+          />
+        </DialogContent>
+      </Dialog>
     </>
   );
 };

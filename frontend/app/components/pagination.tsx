@@ -1,37 +1,36 @@
-import { ChevronLeftIcon, ChevronRightIcon } from "lucide-react";
 import { Button } from "./ui/button";
 
-export function Pagination({
-  currentPage,
-  totalPages,
-  goLeft,
-  goRight,
-}: {
-  currentPage: number;
-  totalPages: number;
+type Props = {
+  leftButtonDisabled: boolean;
+  rightButtonDisabled: boolean;
   goLeft: () => void;
   goRight: () => void;
-}) {
-  const buttonClass = "bg-blue-200 p-2 rounded disabled:opacity-50 w-8 h-8";
+};
+
+export function Pagination({
+  leftButtonDisabled,
+  rightButtonDisabled,
+  goLeft,
+  goRight,
+}: Props) {
   return (
-    <div className="flex items-center justify-center mx-auto w-full ">
-      <div className="flex items-center gap-2">
+    <div className="flex items-center justify-end space-x-2 py-4">
+      <div className="space-x-2">
         <Button
+          variant="noShadow"
+          size="sm"
           onClick={goLeft}
-          disabled={currentPage === 1}
-          className="bg-blue-200 p-2 rounded disabled:opacity-50 w-8 h-8"
+          disabled={leftButtonDisabled}
         >
-          <ChevronLeftIcon />
+          Previous
         </Button>
-        <span>
-          Page {currentPage} of {totalPages}
-        </span>
         <Button
+          variant="noShadow"
+          size="sm"
           onClick={goRight}
-          disabled={currentPage === totalPages}
-          className={buttonClass}
+          disabled={rightButtonDisabled}
         >
-          <ChevronRightIcon />
+          Next
         </Button>
       </div>
     </div>

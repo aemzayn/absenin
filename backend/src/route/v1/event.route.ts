@@ -35,4 +35,22 @@ router.get("/:eventId/attendees", controller.getEventAttendees);
 
 router.post("/", controller.createEvent);
 
+router.put(
+  "/:eventId",
+  [
+    param("eventId").isNumeric().withMessage("Event ID must be a number"),
+    validateRequest,
+  ],
+  controller.updateEvent
+);
+
+router.delete(
+  "/:eventId",
+  [
+    param("eventId").isNumeric().withMessage("Event ID must be a number"),
+    validateRequest,
+  ],
+  controller.deleteEvent
+);
+
 export default router;

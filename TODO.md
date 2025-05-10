@@ -24,10 +24,10 @@ Members
 Events
 
 - [x] Create event page
-- [ ] Edit event page
-- [ ] Delete event
+- [x] Edit event page
+- [x] Delete event
 - [x] Event table pagination and search
-- [ ] Responsive UI
+- [x] Responsive UI
 
 QR Code
 

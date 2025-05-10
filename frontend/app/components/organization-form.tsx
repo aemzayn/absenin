@@ -44,33 +44,31 @@ export const OrganizationForm = ({ onCreate, onFailure }: Props) => {
   };
 
   return (
-    <div className="p-5">
-      <Form onSubmit={handleCreate}>
-        <div className="flex flex-col gap-6">
-          <div className="grid gap-2">
-            <Label htmlFor="name">Nama organisasi</Label>
-            <Input
-              id="name"
-              name="name"
-              type="text"
-              required
-              minLength={3}
-              maxLength={255}
-            />
-          </div>
+    <Form onSubmit={handleCreate}>
+      <div className="flex flex-col gap-6">
+        <div className="grid gap-2">
+          <Label htmlFor="name">Nama organisasi</Label>
+          <Input
+            id="name"
+            name="name"
+            type="text"
+            required
+            minLength={3}
+            maxLength={255}
+          />
         </div>
+      </div>
 
-        <Button type="submit" className="mt-4" disabled={submitting}>
-          {submitting ? (
-            <>
-              Sedang membuat organisasi barumu...
-              <Spinner />
-            </>
-          ) : (
-            "Buat sekarang"
-          )}
-        </Button>
-      </Form>
-    </div>
+      <Button type="submit" className="mt-4" disabled={submitting}>
+        {submitting ? (
+          <>
+            Sedang membuat organisasi barumu...
+            <Spinner />
+          </>
+        ) : (
+          "Buat sekarang"
+        )}
+      </Button>
+    </Form>
   );
 };

@@ -21,4 +21,12 @@ export class EventService {
   static async getUpcomingEventsByOrganization(organizationId: number) {
     return apiClient.get(`/v1/events/organization/${organizationId}`);
   }
+
+  static async updateEvent(eventId: number, event: CreateEvent) {
+    return apiClient.put(`/v1/events/${eventId}`, event);
+  }
+
+  static async deleteEvent(eventId: number) {
+    return apiClient.delete(`/v1/events/${eventId}`);
+  }
 }

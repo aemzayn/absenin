@@ -1,6 +1,5 @@
-import { AiOutlineLoading3Quarters } from "react-icons/ai";
-import type { IconType } from "react-icons/lib";
+import { LoaderCircle } from "lucide-react";
 
-export const Spinner = (props?: Partial<IconType>) => {
-  return <AiOutlineLoading3Quarters {...props} className="spin" />;
+export const Spinner = () => {
+  return <LoaderCircle className="spin" />;
 };

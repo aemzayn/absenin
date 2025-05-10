@@ -35,12 +35,13 @@ import {
 import type { Attendee } from "~/interfaces/attendee";
 import { AttendeeBadge } from "./attendee-badge";
 import { SortIcon } from "./icons/sort-icon";
+import { Pagination } from "./pagination";
 
 type Props = {
   attendees: Attendee[];
 };
 
-export const columns: ColumnDef<Attendee>[] = [
+const columns: ColumnDef<Attendee>[] = [
   {
     accessorKey: "name",
     header: ({ column }) => {
@@ -56,7 +57,6 @@ export const columns: ColumnDef<Attendee>[] = [
         </Button>
       );
     },
-    cell: ({ row }) => <div className="lowercase">{row.getValue("name")}</div>,
   },
   {
     accessorKey: "attended",
@@ -76,37 +76,6 @@ export const columns: ColumnDef<Attendee>[] = [
     cell: ({ row }) => {
       const attendeed = row.getValue("attended") as boolean;
       return <AttendeeBadge isAttended={attendeed} />;
-    },
-  },
-  {
-    id: "actions",
-    enableHiding: false,
-    cell: ({ row }) => {
-      const payment = row.original;
-
-      return (
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="noShadow" className="size-8 p-0">
-              <span className="sr-only">Open menu</span>
-              <MoreHorizontal />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuLabel>Actions</DropdownMenuLabel>
-            <DropdownMenuItem
-              onClick={() =>
-                navigator.clipboard.writeText(payment.id.toString())
-              }
-            >
-              Copy payment ID
-            </DropdownMenuItem>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem>View customer</DropdownMenuItem>
-            <DropdownMenuItem>View payment details</DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
-      );
     },
   },
 ];
@@ -140,7 +109,7 @@ export const AttendeesTable = ({ attendees }: Props) => {
     <div className="w-full font-base text-main-foreground">
       <div className="flex items-center py-4">
         <Input
-          placeholder="Cari peserta..."
+          placeholder="Cari daftar hadir..."
           value={(table.getColumn("name")?.getFilterValue() as string) ?? ""}
           onChange={(event) =>
             table.getColumn("name")?.setFilterValue(event.target.value)
@@ -197,7 +166,7 @@ export const AttendeesTable = ({ attendees }: Props) => {
                   colSpan={columns.length}
                   className="h-24 text-center"
                 >
-                  No results.
+                  Data tidak ditemukan
                 </TableCell>
               </TableRow>
             )}
@@ -205,26 +174,12 @@ export const AttendeesTable = ({ attendees }: Props) => {
         </Table>
       </div>
 
-      <div className="flex items-center justify-end space-x-2 py-4">
-        <div className="space-x-2">
-          <Button
-            variant="noShadow"
-            size="sm"
-            onClick={() => table.previousPage()}
-            disabled={!table.getCanPreviousPage()}
-          >
-            Previous
-          </Button>
-          <Button
-            variant="noShadow"
-            size="sm"
-            onClick={() => table.nextPage()}
-            disabled={!table.getCanNextPage()}
-          >
-            Next
-          </Button>
-        </div>
-      </div>
+      <Pagination
+        goLeft={() => table.previousPage()}
+        goRight={() => table.nextPage()}
+        leftButtonDisabled={!table.getCanPreviousPage()}
+        rightButtonDisabled={!table.getCanNextPage()}
+      />
     </div>
   );
 };

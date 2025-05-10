@@ -63,7 +63,7 @@ export async function clientAction({ request }: ActionFunctionArgs) {
 
 export default function RegisterPage() {
   return (
-    <Form className="w-md mx-auto rounded-xlß" method="post">
+    <Form className="w-md mx-auto rounded-xl" method="post">
       <Card className="w-full max-w-sm">
         <CardHeader>
           <CardTitle>Daftar</CardTitle>
