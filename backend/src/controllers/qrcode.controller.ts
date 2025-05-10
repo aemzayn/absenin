@@ -31,26 +31,19 @@ export async function signQrCode(
   next: NextFunction
 ) {
   try {
-    const { memberId, eventId } = req.body;
-    if (!memberId || !eventId) {
+    const token = req.query.token as string;
+    if (!req.query.eventId) {
       res.status(400).json({
-        error: "Member ID and Event ID are required",
+        error: "Event ID is required",
       });
       return;
     }
+    const eventId = +req.query.eventId as number;
 
-    const event = await db.event.findUnique({
-      where: { id: eventId },
+    const qrcode = await db.qrcode.findUnique({
+      where: { token },
       include: {
-        Organization: {
-          include: {
-            members: {
-              where: { id: memberId },
-            },
-          },
-        },
-        EventMember: {
-          where: { memberId },
+        member: {
           select: {
             id: true,
           },
@@ -58,30 +51,36 @@ export async function signQrCode(
       },
     });
 
+    if (!qrcode) {
+      res.status(400).json({
+        error: "QR Code tidak valid",
+      });
+      return;
+    }
+
+    const memberId = qrcode.member.id;
+
+    const event = await db.event.findUnique({
+      where: { id: +eventId },
+      include: {
+        EventMember: {
+          where: {
+            memberId,
+          },
+        },
+      },
+    });
+
     if (!event) {
-      res.status(404).json({
-        error: "Event not found",
-      });
-      return;
-    }
-
-    if (!event.Organization) {
-      res.status(404).json({
-        error: "Invalid QrCode",
-      });
-      return;
-    }
-
-    if (!event.Organization.members.length) {
-      res.status(404).json({
-        error: "Member not found in this organization",
+      res.status(400).json({
+        error: "QR Code tidak valid",
       });
       return;
     }
 
     if (event.EventMember.length > 0) {
       res.status(400).json({
-        error: "Member already signed in",
+        error: "Peserta sudah melakukan absensi",
       });
       return;
     }
@@ -96,7 +95,7 @@ export async function signQrCode(
 
     res
       .status(200)
-      .json({ data: null, message: "Member signed in successfully" });
+      .json({ data: null, message: "QR Code berhasil diverifikasi" });
   } catch (error) {
     next(error);
   }
