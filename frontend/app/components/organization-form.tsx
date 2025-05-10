@@ -48,7 +48,7 @@ export const OrganizationForm = ({ onCreate, onFailure }: Props) => {
       <Form onSubmit={handleCreate}>
         <div className="flex flex-col gap-6">
           <div className="grid gap-2">
-            <Label htmlFor="name">Organization Name</Label>
+            <Label htmlFor="name">Nama organisasi</Label>
             <Input
               id="name"
               name="name"
@@ -63,11 +63,11 @@ export const OrganizationForm = ({ onCreate, onFailure }: Props) => {
         <Button type="submit" className="mt-4" disabled={submitting}>
           {submitting ? (
             <>
-              Creating your organization...
+              Sedang membuat organisasi barumu...
               <Spinner />
             </>
           ) : (
-            "Create Organization"
+            "Buat sekarang"
           )}
         </Button>
       </Form>

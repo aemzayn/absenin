@@ -1,3 +1,4 @@
+import { ACCESS_TOKEN, REFRESH_TOKEN } from "~/api/constants";
 import apiClient from "../api/client";
 
 export class AuthService {
@@ -22,5 +23,12 @@ export class AuthService {
       name,
       password,
     });
+  }
+
+  static async logout() {
+    sessionStorage.removeItem(ACCESS_TOKEN);
+    sessionStorage.removeItem(REFRESH_TOKEN);
+    delete apiClient.defaults.headers.common["Authorization"];
+    delete apiClient.defaults.headers.common["x-refresh-token"];
   }
 }

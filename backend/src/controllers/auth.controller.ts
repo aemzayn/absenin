@@ -55,14 +55,14 @@ export async function login(req: Request, res: Response, next: NextFunction) {
     });
 
     if (!user) {
-      res.status(400).json({ message: "Invalid email or password" });
+      res.status(404).json({ message: "User does not exist" });
       return;
     }
 
     const isPasswordValid = await bcrypt.compare(password, user.password);
 
     if (!isPasswordValid) {
-      res.status(400).json({ message: "Invalid emailjj or password" });
+      res.status(400).json({ message: "Invalid email or password" });
       return;
     }
 

@@ -1,4 +1,4 @@
-import { isValidElement, useEffect, useState } from "react";
+import { isValidElement, useEffect, useRef, useState } from "react";
 import {
   Table,
   TableBody,
@@ -13,6 +13,7 @@ import { Button } from "./ui/button";
 import { toast } from "sonner";
 import { Input } from "./ui/input";
 import { QrCodeIcon } from "lucide-react";
+import { downloadQRCode } from "~/lib/download-qr";
 
 type Props = {
   organizationId: number;
@@ -35,7 +36,7 @@ export const MembersTable = ({ organizationId }: Props) => {
       const data: Member[] = res.data.data;
       setMembers(data);
     } catch (error) {
-      toast.error("Error getting members");
+      toast.error("Gagl menambahkan data peserta");
     }
   };
 
@@ -54,9 +55,9 @@ export const MembersTable = ({ organizationId }: Props) => {
 
       setMembers((prev) => [...prev, ...data]);
       setCandidates((prev) => prev.filter((_, index) => index !== rowIndex));
-      toast.success("Member added");
+      toast.success("Peserta berhasil ditambahkan");
     } catch (error) {
-      toast.error("Error adding member");
+      toast.error("Gagal menambahkan peserta");
     }
   };
 
@@ -71,9 +72,9 @@ export const MembersTable = ({ organizationId }: Props) => {
         delete prev[member.id];
         return { ...prev };
       });
-      toast.success("Member updated");
+      toast.success("Data berhasil diperbarui");
     } catch (error) {
-      toast.error("Error updating member");
+      toast.error("Gagal memperbarui data");
     }
   };
 
@@ -86,28 +87,41 @@ export const MembersTable = ({ organizationId }: Props) => {
         delete prev[memberId];
         return { ...prev };
       });
-      toast.success("Member removed");
+      toast.success("Data berhasil dihapus");
     } catch (error) {
-      toast.error("Error removing member");
+      toast.error("Gagal menghapus data");
     }
+  };
+
+  const handleDownloadQrCode = async (member: Member) => {
+    const qr = member.qrcode?.qrcode;
+    if (!qr) {
+      toast.error("QR code tidak ditemukan");
+      return;
+    }
+    const fileName = `${member.name.replace(/\s+/g, "_")}.png`;
+    downloadQRCode(qr, fileName);
   };
 
   return (
     <div className="flex flex-col gap-2 items-start">
-      <Button
-        className="bg-blue-200"
-        onClick={() => {
-          setCandidates((prev) => [...prev, { name: "" }]);
-        }}
-        size={"sm"}
-      >
-        Add member
-      </Button>
+      <div className="flex gap-2">
+        <Button
+          className="bg-blue-200"
+          onClick={() => {
+            const newCandidates = [...candidates, { name: "" }];
+            setCandidates(newCandidates);
+          }}
+          size={"sm"}
+        >
+          Tambah Peserta
+        </Button>
+      </div>
 
       <Table className="border">
         <TableHeader>
           <TableRow className="bg-blue-500 hover:bg-blue-500">
-            <TableHead>Name</TableHead>
+            <TableHead>Nama</TableHead>
             <TableHead className="text-center">QR code</TableHead>
             <TableHead></TableHead>
           </TableRow>
@@ -142,7 +156,11 @@ export const MembersTable = ({ organizationId }: Props) => {
               </TableCell>
 
               <TableCell className="text-center">
-                <Button size={"sm"} variant={"neutral"}>
+                <Button
+                  size={"sm"}
+                  variant={"neutral"}
+                  onClick={() => handleDownloadQrCode(member)}
+                >
                   Download <QrCodeIcon />
                 </Button>
               </TableCell>
@@ -162,7 +180,7 @@ export const MembersTable = ({ organizationId }: Props) => {
                         size={"sm"}
                         className="bg-gray-200"
                       >
-                        Cancel
+                        Batal
                       </Button>
                       <Button
                         disabled={loading}
@@ -172,7 +190,7 @@ export const MembersTable = ({ organizationId }: Props) => {
                         size={"sm"}
                         className="bg-green-400"
                       >
-                        Save
+                        Simpan
                       </Button>
                       <Button
                         disabled={loading}
@@ -182,7 +200,7 @@ export const MembersTable = ({ organizationId }: Props) => {
                         size={"sm"}
                         className="bg-red-400"
                       >
-                        Delete
+                        Hapus
                       </Button>
                     </>
                   ) : (
@@ -238,17 +256,18 @@ export const MembersTable = ({ organizationId }: Props) => {
                       }
                       className="bg-green-500 disabled:bg-gray-400"
                     >
-                      Save
+                      Simpan
                     </Button>
                     <Button
                       className="bg-red-400"
                       onClick={() => {
-                        setCandidates((prev) =>
-                          prev.filter((_, i) => i !== index)
+                        const newCandidates = candidates.filter(
+                          (_, i) => i !== index
                         );
+                        setCandidates(newCandidates);
                       }}
                     >
-                      Remove
+                      Hapus
                     </Button>
                   </div>
                 </TableCell>

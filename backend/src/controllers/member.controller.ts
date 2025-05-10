@@ -118,7 +118,12 @@ export async function registerMembers(
         JSON.stringify({
           memberId: member.id,
           memberName: member.name,
-        })
+        }),
+        {
+          errorCorrectionLevel: "H", // high error correction
+          margin: 1, // reduce margin to 1
+          width: 500, // resolution to 500x500
+        }
       );
       qrCodes.push({
         memberId: member.id,
@@ -203,6 +208,9 @@ export async function deleteMember(
 
     await db.member.delete({
       where: { id },
+      include: {
+        qrcode: true,
+      },
     });
 
     res.status(204).send();

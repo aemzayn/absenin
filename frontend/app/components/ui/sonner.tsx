@@ -13,7 +13,7 @@ const Toaster = ({ ...props }: ToasterProps) => {
         classNames: {
           toast:
             "bg-background text-foreground border-border border-2 font-heading shadow-shadow rounded-base text-[13px] flex items-center gap-2.5 p-4 w-[356px] [&:has(button)]:justify-between",
-          description: "font-base",
+          description: "text-sm",
           actionButton:
             "font-base border-2 text-[12px] h-6 px-2 bg-main text-main-foreground border-border rounded-base shrink-0",
           cancelButton:

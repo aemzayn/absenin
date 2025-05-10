@@ -43,8 +43,8 @@ export default function OrganizationDetail() {
 
       <Tabs defaultValue="events">
         <TabsList className="grid grid-cols-2 max-w-[400px] ">
-          <TabsTrigger value="events">Events</TabsTrigger>
-          <TabsTrigger value="members">Members</TabsTrigger>
+          <TabsTrigger value="events">Daftar Acara</TabsTrigger>
+          <TabsTrigger value="members">Peserta</TabsTrigger>
         </TabsList>
 
         <TabsContent value="events">

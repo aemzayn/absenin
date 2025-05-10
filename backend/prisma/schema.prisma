@@ -28,8 +28,8 @@ model Member {
 
   qrcode Qrcode?
 
-  Organization   Organization? @relation(fields: [organizationId], references: [id])
-  organizationId Int?
+  Organization   Organization  @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  organizationId Int
   EventMember    EventMember[]
 }
 
@@ -37,7 +37,7 @@ model Qrcode {
   id     Int    @id @default(autoincrement())
   qrcode String @db.Text
 
-  member   Member @relation(fields: [memberId], references: [id])
+  member   Member @relation(fields: [memberId], references: [id], onDelete: Cascade)
   memberId Int    @unique
 }
 
@@ -63,7 +63,7 @@ model Event {
   location       String?       @db.VarChar(255)
   createdAt      DateTime      @default(now()) @db.Timestamptz(3)
   updatedAt      DateTime      @default(now()) @updatedAt @db.Timestamptz(3)
-  Organization   Organization? @relation(fields: [organizationId], references: [id])
+  Organization   Organization? @relation(fields: [organizationId], references: [id], onDelete: Cascade)
   organizationId Int?
   EventMember    EventMember[]
 }
@@ -75,8 +75,12 @@ model EventMember {
   createdAt DateTime @default(now()) @db.Timestamptz(3)
   updatedAt DateTime @default(now()) @updatedAt @db.Timestamptz(3)
 
-  event  Event  @relation(fields: [eventId], references: [id])
-  member Member @relation(fields: [memberId], references: [id])
+  event  Event  @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  member Member @relation(fields: [memberId], references: [id], onDelete: Cascade)
+
+  @@unique([eventId, memberId])
+  @@index([eventId])
+  @@index([memberId])
 }
 
 enum OrganizationRole {
@@ -93,6 +97,10 @@ model OrganizationMembership {
   joinedAt       DateTime         @default(now()) @db.Timestamptz(3)
   createdAt      DateTime         @default(now()) @db.Timestamptz(3)
   updatedAt      DateTime         @default(now()) @updatedAt @db.Timestamptz(3)
-  User           User             @relation(fields: [userId], references: [id])
-  Organization   Organization     @relation(fields: [organizationId], references: [id])
+  User           User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  Organization   Organization     @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, organizationId])
+  @@index([userId])
+  @@index([organizationId])
 }

@@ -21,7 +21,9 @@ export function OrganizationCard({ organization }: Props) {
       <CardHeader>
         <CardTitle>{organization.name}</CardTitle>
       </CardHeader>
+
       <CardContent>{organization.description}</CardContent>
+
       <CardFooter className="flex-col gap-2">
         <Button
           className="w-full bg-blue-200"
@@ -29,7 +31,7 @@ export function OrganizationCard({ organization }: Props) {
             navigate(`/organization/${organization.id}`);
           }}
         >
-          View
+          Kunjungi
         </Button>
       </CardFooter>
     </Card>

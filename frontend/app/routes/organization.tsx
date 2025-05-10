@@ -38,12 +38,12 @@ export default function OrganizationPage() {
 
   const handleCreateOrganization = () => {
     setShowForm(false);
-    toast.success("Organization created successfully");
+    toast.success("Organisasi berhasil dibuat");
     revalidate();
   };
 
   const handleFailCreateOrganization = () => {
-    toast.error("Failed to create organization");
+    toast.error("Gagal membuat organisasi");
   };
 
   return (
@@ -51,22 +51,25 @@ export default function OrganizationPage() {
       <Dialog open={showForm} onOpenChange={setShowForm}>
         {totalOrganizations === 0 && (
           <div className="flex flex-col items-center justify-center">
-            <h2 className="text-lg font-semibold">No Organizations</h2>
+            <h2 className="text-lg font-semibold">
+              Organisasi tidak ditemukan
+            </h2>
             <p className="text-gray-500">
-              You are not a member of any organizations.
+              Anda belum memiliki organisasi. Silakan buat organisasi baru untuk
+              memulai.
             </p>
           </div>
         )}
 
         <DialogTrigger asChild>
           <Button className="mt-4" size={"sm"}>
-            Create Organization
+            Buat organisasi
           </Button>
         </DialogTrigger>
 
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Create Organization</DialogTitle>
+            <DialogTitle>Buat organisasi</DialogTitle>
           </DialogHeader>
           <OrganizationForm
             onCreate={handleCreateOrganization}

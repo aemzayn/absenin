@@ -44,15 +44,15 @@ export const EventsTable = ({ organizationId }: Props) => {
   return (
     <div className="flex flex-col gap-2 items-start">
       <Button className="bg-blue-200" onClick={() => {}} size={"sm"}>
-        Add event
+        Tambah acara
       </Button>
       <Table className="border">
         <TableHeader>
           <TableRow className="bg-blue-500 hover:bg-blue-500">
-            <TableHead>Name</TableHead>
-            <TableHead>Description</TableHead>
-            <TableHead>Location</TableHead>
-            <TableHead>Date</TableHead>
+            <TableHead>Nama</TableHead>
+            <TableHead>Keterangan</TableHead>
+            <TableHead>Lokasi</TableHead>
+            <TableHead>Tanggal</TableHead>
           </TableRow>
         </TableHeader>
 

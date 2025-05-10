@@ -35,6 +35,11 @@ apiClient.interceptors.response.use(
     return response;
   },
   (error) => {
+    if (!error.response) {
+      // Handle network error
+      console.error("Network error:", error);
+      return Promise.reject(error);
+    }
     if (error.response.status === 401) {
       sessionStorage.removeItem(ACCESS_TOKEN);
       sessionStorage.removeItem(REFRESH_TOKEN);

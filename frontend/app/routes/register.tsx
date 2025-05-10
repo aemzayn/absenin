@@ -1,4 +1,6 @@
-import { Form, Link, type ActionFunctionArgs } from "react-router";
+import { AxiosError } from "axios";
+import { Form, Link, redirect, type ActionFunctionArgs } from "react-router";
+import { toast } from "sonner";
 import { Button } from "~/components/ui/button";
 import {
   Card,
@@ -32,19 +34,30 @@ export async function clientAction({ request }: ActionFunctionArgs) {
   }
 
   try {
-    const res = await AuthService.register({
+    await AuthService.register({
       email,
       name,
       password,
     });
-    const data = res.data;
 
-    console.log(data);
+    toast.success("Akun berhasil dibuat", {
+      description: "Silakan masuk ke akun Anda",
+    });
 
-    // Call your registration API here
-    console.log("Registering user:", { email, password });
+    return redirect("/login");
   } catch (error) {
-    console.error("Registration error:", error);
+    if (error instanceof AxiosError) {
+      const status = error.response?.status;
+      if (status === 400) {
+        toast.error("Email sudah terdaftar");
+      } else if (status === 500) {
+        toast.error("Terjadi kesalahan pada server");
+      } else {
+        toast.error("Gagal mendaftar, silakan coba lagi");
+      }
+    } else {
+      toast.error("Gagal mendaftar, silakan coba lagi");
+    }
   }
 }
 

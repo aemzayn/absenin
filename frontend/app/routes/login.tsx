@@ -52,7 +52,9 @@ export async function clientAction({ request }: ActionFunctionArgs) {
   } catch (error) {
     if (error instanceof AxiosError) {
       const status = error.response?.status;
-      if (status === 400) {
+      if (status === 404) {
+        toast("Akun tidak ditemukan");
+      } else if (status === 400) {
         toast("Email atau kata sandi salah");
       } else {
         toast("Terjadi kesalahan saat login");
