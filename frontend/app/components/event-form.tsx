@@ -4,28 +4,54 @@ import { Spinner } from "./icons/spinner";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import { Label } from "./ui/label";
-import { type CreateEvent } from "~/interfaces/event";
+import type { CreateEvent, Event } from "~/interfaces/event";
 import { Textarea } from "./ui/textarea";
 import { Calendar } from "./ui/calendar";
 import dayjs from "dayjs";
 import localize from "dayjs/plugin/localizedFormat";
+import { EventService } from "~/services/event.service";
 
 dayjs.extend(localize);
 
-export const EventForm = () => {
+type Props = {
+  organizationId: number;
+  onCreate?: (event: Event) => void;
+  onFailure?: (error: Error) => void;
+};
+
+export const EventForm = ({ organizationId, onCreate, onFailure }: Props) => {
   const [submitting, setSubmitting] = useState(false);
-  const [form, setForm] = useState<CreateEvent>({
-    name: "",
-    description: undefined,
-    location: undefined,
-    date: dayjs().add(1, "day").toDate(),
-  });
+  const [date, setDate] = useState<Date | undefined>(
+    dayjs().add(1, "day").toDate()
+  );
 
-  const handleCreate = async (event: React.FormEvent<HTMLFormElement>) => {};
+  const eventDateFormatted = date ? dayjs(date).format("LL") : undefined;
 
-  const eventDateFormatted = form.date
-    ? dayjs(form.date).format("LL")
-    : undefined;
+  const handleCreate = async (event: React.FormEvent<HTMLFormElement>) => {
+    try {
+      setSubmitting(true);
+      event.preventDefault();
+      const formData = new FormData(event.currentTarget);
+      const name = formData.get("name")! as string;
+      const location = formData.get("location") as string;
+      const description = formData.get("description") as string;
+
+      const res = await EventService.createEvent({
+        name,
+        location,
+        description,
+        organizationId,
+      });
+
+      const newEvent = res.data.data;
+      onCreate?.(newEvent);
+    } catch (error) {
+      console.error("Error creating event:", error);
+      onFailure?.(error as Error);
+    } finally {
+      setSubmitting(false);
+    }
+  };
 
   return (
     <div className="p-5">
@@ -39,7 +65,8 @@ export const EventForm = () => {
               type="text"
               required
               minLength={3}
-              maxLength={255}
+              maxLength={100}
+              disabled={submitting}
             />
           </div>
 
@@ -57,8 +84,11 @@ export const EventForm = () => {
               <Calendar
                 id="date"
                 mode="single"
-                selected={form.date}
-                onSelect={(date) => setForm({ ...form, date })}
+                selected={date}
+                onSelect={setDate}
+                disabled={{
+                  before: dayjs().subtract(7, "day").toDate(),
+                }}
                 required
               />
             </div>
@@ -72,6 +102,7 @@ export const EventForm = () => {
               type="text"
               minLength={3}
               maxLength={255}
+              disabled={submitting}
               placeholder="Contoh: Jakarta, Indonesia"
             />
           </div>
@@ -84,6 +115,7 @@ export const EventForm = () => {
               minLength={3}
               maxLength={255}
               placeholder="Deskripsi singkat tentang acara ini"
+              disabled={submitting}
             />
           </div>
         </div>

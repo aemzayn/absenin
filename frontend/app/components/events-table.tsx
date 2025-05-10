@@ -29,26 +29,37 @@ export const EventsTable = ({ organizationId }: Props) => {
   const [events, setEvents] = useState<Event[]>([]);
   const [showForm, setShowForm] = useState(false);
 
-  useEffect(() => {
-    const fetchEvents = async () => {
-      if (!organizationId) {
-        setEvents([]);
-        return;
-      }
-      try {
-        const res = await EventService.getUpcomingEventsByOrganization(
-          organizationId
-        );
-        const events: Event[] = res.data.data;
-        setEvents(events);
-      } catch (error) {
-        toast.error("Error getting events");
-        setEvents([]);
-      }
-    };
+  const fetchEvents = async () => {
+    if (!organizationId) {
+      setEvents([]);
+      return;
+    }
+    try {
+      const res = await EventService.getUpcomingEventsByOrganization(
+        organizationId
+      );
+      const events: Event[] = res.data.data;
+      setEvents(events);
+    } catch (error) {
+      toast.error("Error getting events");
+      setEvents([]);
+    }
+  };
 
+  useEffect(() => {
     fetchEvents();
   }, [organizationId]);
+
+  const onEventCreated = (event: Event) => {
+    setEvents((prevEvents) => [...prevEvents, event]);
+    toast.success("Event created successfully");
+    setShowForm(false);
+  };
+
+  const onEventCreationFailed = (error: Error) => {
+    toast.error("Error creating event");
+    console.error("Error creating event:", error);
+  };
 
   return (
     <div className="flex flex-col gap-2 items-start">
@@ -63,7 +74,11 @@ export const EventsTable = ({ organizationId }: Props) => {
           <DialogHeader>
             <DialogTitle>Buat acara baru</DialogTitle>
           </DialogHeader>
-          <EventForm />
+          <EventForm
+            organizationId={organizationId}
+            onCreate={onEventCreated}
+            onFailure={onEventCreationFailed}
+          />
         </DialogContent>
       </Dialog>
 

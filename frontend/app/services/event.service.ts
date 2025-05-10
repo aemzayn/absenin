@@ -1,8 +1,13 @@
 import apiClient from "~/api/client";
+import type { CreateEvent } from "~/interfaces/event";
 
 export class EventService {
   static async getUpcomingEvents() {
     return apiClient.get("/v1/events");
+  }
+
+  static async createEvent(event: CreateEvent) {
+    return apiClient.post("/v1/events", event);
   }
 
   static async getEventAttendees(eventId: number) {
