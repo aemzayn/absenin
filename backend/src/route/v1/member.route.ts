@@ -12,7 +12,9 @@ router.get(
 
 router.get("/:id", controller.getMemberById);
 
-router.post("/", controller.registerMembers);
+router.post("/", controller.registerMember);
+
+router.post("/many-members", controller.registerMembers);
 
 router.put("/:id", controller.updateMember);
 

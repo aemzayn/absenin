@@ -3,6 +3,7 @@ import {
   Table,
   TableBody,
   TableCell,
+  TableFooter,
   TableHead,
   TableHeader,
   TableRow,
@@ -14,6 +15,8 @@ import { toast } from "sonner";
 import { Input } from "./ui/input";
 import { QrCodeIcon } from "lucide-react";
 import { downloadQRCode } from "~/lib/download-qr";
+import { usePagination } from "~/hooks/use-pagination";
+import { Pagination } from "./pagination";
 
 type Props = {
   organizationId: number;
@@ -28,6 +31,9 @@ export const MembersTable = ({ organizationId }: Props) => {
   const [editingMembers, setEditingMembers] = useState<{
     [key: number]: Member;
   }>({});
+
+  const { currentData, currentPage, totalPages, goLeft, goRight } =
+    usePagination(members);
 
   const fetchMembers = async () => {
     if (!organizationId) return;
@@ -128,7 +134,60 @@ export const MembersTable = ({ organizationId }: Props) => {
         </TableHeader>
 
         <TableBody>
-          {members.map((member: Member) => (
+          {candidates.map((candidate, index) => {
+            return (
+              <TableRow key={index} className="bg-blue-200 hover:bg-blue-300">
+                <TableCell>
+                  <Input
+                    type="text"
+                    placeholder="Name"
+                    className="border border-gray-300 rounded p-2"
+                    size={5}
+                    minLength={3}
+                    maxLength={255}
+                    value={candidate.name}
+                    onChange={(e) => {
+                      const newCandidates = [...candidates];
+                      newCandidates[index].name = e.target.value;
+                      setCandidates(newCandidates);
+                    }}
+                  />
+                </TableCell>
+                <TableCell></TableCell>
+                <TableCell className="text-right">
+                  <div className="flex gap-2 justify-end">
+                    <Button
+                      onClick={() => {
+                        handleSaveMember(candidate, index);
+                      }}
+                      disabled={
+                        !candidate.name ||
+                        candidate.name.length < 3 ||
+                        candidate.name.length > 255 ||
+                        loading
+                      }
+                      className="bg-green-500 disabled:bg-gray-400"
+                    >
+                      Simpan
+                    </Button>
+                    <Button
+                      className="bg-red-400"
+                      onClick={() => {
+                        const newCandidates = candidates.filter(
+                          (_, i) => i !== index
+                        );
+                        setCandidates(newCandidates);
+                      }}
+                    >
+                      Hapus
+                    </Button>
+                  </div>
+                </TableCell>
+              </TableRow>
+            );
+          })}
+
+          {currentData.map((member: Member) => (
             <TableRow key={member.id} className="bg-blue-200 hover:bg-blue-300">
               <TableCell>
                 {editingMembers[member.id] ? (
@@ -221,60 +280,20 @@ export const MembersTable = ({ organizationId }: Props) => {
               </TableCell>
             </TableRow>
           ))}
-
-          {candidates.map((candidate, index) => {
-            return (
-              <TableRow key={index} className="bg-blue-200 hover:bg-blue-300">
-                <TableCell>
-                  <Input
-                    type="text"
-                    placeholder="Name"
-                    className="border border-gray-300 rounded p-2"
-                    size={5}
-                    minLength={3}
-                    maxLength={255}
-                    value={candidate.name}
-                    onChange={(e) => {
-                      const newCandidates = [...candidates];
-                      newCandidates[index].name = e.target.value;
-                      setCandidates(newCandidates);
-                    }}
-                  />
-                </TableCell>
-                <TableCell></TableCell>
-                <TableCell className="text-right">
-                  <div className="flex gap-2 justify-end">
-                    <Button
-                      onClick={() => {
-                        handleSaveMember(candidate, index);
-                      }}
-                      disabled={
-                        !candidate.name ||
-                        candidate.name.length < 3 ||
-                        candidate.name.length > 255 ||
-                        loading
-                      }
-                      className="bg-green-500 disabled:bg-gray-400"
-                    >
-                      Simpan
-                    </Button>
-                    <Button
-                      className="bg-red-400"
-                      onClick={() => {
-                        const newCandidates = candidates.filter(
-                          (_, i) => i !== index
-                        );
-                        setCandidates(newCandidates);
-                      }}
-                    >
-                      Hapus
-                    </Button>
-                  </div>
-                </TableCell>
-              </TableRow>
-            );
-          })}
         </TableBody>
+
+        <TableFooter>
+          <TableRow>
+            <TableCell colSpan={3}>
+              <Pagination
+                currentPage={currentPage}
+                totalPages={totalPages}
+                goLeft={goLeft}
+                goRight={goRight}
+              />
+            </TableCell>
+          </TableRow>
+        </TableFooter>
       </Table>
     </div>
   );

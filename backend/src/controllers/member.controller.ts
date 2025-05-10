@@ -1,6 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import QRCode from "qrcode";
 import db from "../database";
+import { createQrCode } from "@/utils/create-qr";
 
 export async function getMembers(
   req: Request,
@@ -81,6 +82,79 @@ export async function getMemberById(
     }
 
     res.json({ data: member });
+  } catch (error) {
+    next(error);
+  }
+}
+
+export async function registerMember(
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
+  try {
+    const member = req.body.member;
+    const organizationId = req.body.organizationId;
+
+    const organization = await db.organization.findUnique({
+      where: { id: organizationId },
+    });
+
+    if (!organization) {
+      res.status(404).json({
+        error: "Organization not found",
+      });
+      return;
+    }
+
+    const sameName = await db.member.findFirst({
+      where: {
+        name: member.name,
+        organizationId,
+      },
+    });
+
+    if (sameName) {
+      res.status(400).json({
+        error: "Member with the same name already exists",
+      });
+      return;
+    }
+
+    const createdMember = await db.member.create({
+      data: {
+        name: member.name,
+        organizationId,
+      },
+    });
+
+    const qrCode = await createQrCode(
+      JSON.stringify({
+        memberId: createdMember.id,
+        memberName: createdMember.name,
+      })
+    );
+
+    await db.qrcode.create({
+      data: {
+        memberId: createdMember.id,
+        qrcode: qrCode,
+      },
+    });
+
+    const memberWithQRCode = await db.member.findUnique({
+      where: {
+        id: createdMember.id,
+      },
+      include: {
+        qrcode: true,
+      },
+    });
+
+    res.status(201).json({
+      data: memberWithQRCode,
+      message: "Member registered successfully",
+    });
   } catch (error) {
     next(error);
   }
