@@ -8,7 +8,6 @@ import {
   getFilteredRowModel,
   getPaginationRowModel,
   getSortedRowModel,
-  type SortDirection,
   type SortingState,
   useReactTable,
   type VisibilityState,
@@ -35,21 +34,10 @@ import {
 } from "~/components/ui/table";
 import type { Attendee } from "~/interfaces/attendee";
 import { AttendeeBadge } from "./attendee-badge";
+import { SortIcon } from "./icons/sort-icon";
 
 type Props = {
   attendees: Attendee[];
-};
-
-const SortIcon = ({ isSorted }: { isSorted: false | SortDirection }) => {
-  const isAsc = isSorted === "asc";
-  const isDesc = isSorted === "desc";
-  if (isAsc) {
-    return <ArrowUp />;
-  } else if (isDesc) {
-    return <ArrowDown />;
-  }
-
-  return <ArrowUpDown />;
 };
 
 export const columns: ColumnDef<Attendee>[] = [

@@ -1,4 +1,4 @@
-import { isValidElement, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import {
   Table,
   TableBody,
@@ -13,10 +13,27 @@ import { MembersService } from "~/services/members.service";
 import { Button } from "./ui/button";
 import { toast } from "sonner";
 import { Input } from "./ui/input";
-import { QrCodeIcon } from "lucide-react";
 import { downloadQRCode } from "~/lib/download-qr";
 import { usePagination } from "~/hooks/use-pagination";
 import { Pagination } from "./pagination";
+import {
+  flexRender,
+  getCoreRowModel,
+  getFilteredRowModel,
+  getPaginationRowModel,
+  getSortedRowModel,
+  useReactTable,
+  type ColumnDef,
+  type ColumnFiltersState,
+  type RowData,
+  type SortingState,
+  type VisibilityState,
+  type TableMeta,
+} from "@tanstack/react-table";
+import { SortIcon } from "./icons/sort-icon";
+import { QrCodeIcon } from "lucide-react";
+import { useSkipper } from "~/hooks/use-skipper";
+import { NewMemberForm } from "./new-member-form";
 
 type Props = {
   organizationId: number;
@@ -24,48 +41,56 @@ type Props = {
 
 type MemberCandidate = Pick<Member, "name">[];
 
+declare module "@tanstack/react-table" {
+  interface TableMeta<TData extends RowData> {
+    updateData: (
+      rowIndex: number,
+      rowId: number,
+      columnId: string,
+      value: unknown
+    ) => void;
+  }
+}
+
+const defaultColumn: Partial<ColumnDef<Member>> = {
+  cell: ({ getValue, row: { index, original }, column, table }) => {
+    const initialValue = getValue();
+    // We need to keep and update the state of the cell normally
+    const [value, setValue] = useState(initialValue);
+
+    // When the input is blurred, we'll call our table meta's updateData function
+    const onBlur = () => {
+      table.options.meta?.updateData(index, original.id, column.id, value);
+    };
+
+    // If the initialValue is changed external, sync it up with our state
+    useEffect(() => {
+      setValue(initialValue);
+    }, [initialValue]);
+
+    return (
+      <input
+        value={value as string}
+        onChange={(e) => setValue(e.target.value)}
+        onBlur={onBlur}
+      />
+    );
+  },
+};
+
 export const MembersTable = ({ organizationId }: Props) => {
+  const [sorting, setSorting] = useState<SortingState>([]);
+  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
+  const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
+  const [newInputValue, setNewInputValue] = useState("");
+  const [rowSelection, setRowSelection] = useState({});
   const [members, setMembers] = useState<Member[]>([]);
-  const [candidates, setCandidates] = useState<MemberCandidate>([]);
   const [loading, setLoading] = useState(false);
   const [editingMembers, setEditingMembers] = useState<{
-    [key: number]: Member;
+    [key: number]: boolean;
   }>({});
 
-  const { currentData, currentPage, totalPages, goLeft, goRight } =
-    usePagination(members);
-
-  const fetchMembers = async () => {
-    if (!organizationId) return;
-    try {
-      const res = await MembersService.getMembersByOrganization(organizationId);
-      const data: Member[] = res.data.data;
-      setMembers(data);
-    } catch (error) {
-      toast.error("Gagl menambahkan data peserta");
-    }
-  };
-
-  useEffect(() => {
-    fetchMembers();
-  }, [organizationId]);
-
-  const handleSaveMember = async (
-    member: Partial<Member>,
-    rowIndex: number
-  ) => {
-    if (!organizationId) return;
-    try {
-      const res = await MembersService.createMembers(organizationId, [member]);
-      const data: Member[] = res.data.data;
-
-      setMembers((prev) => [...prev, ...data]);
-      setCandidates((prev) => prev.filter((_, index) => index !== rowIndex));
-      toast.success("Peserta berhasil ditambahkan");
-    } catch (error) {
-      toast.error("Gagal menambahkan peserta");
-    }
-  };
+  const [autoResetPageIndex, skipAutoResetPageIndex] = useSkipper();
 
   const handleUpdateMember = async (member: Member) => {
     if (!organizationId) return;
@@ -109,192 +134,222 @@ export const MembersTable = ({ organizationId }: Props) => {
     downloadQRCode(qr, fileName);
   };
 
-  return (
-    <div className="flex flex-col gap-2 items-start">
-      <div className="flex gap-2">
+  const columns: ColumnDef<Member>[] = [
+    {
+      accessorKey: "name",
+      header: ({ column }) => {
+        const isSorted = column.getIsSorted();
+        return (
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          >
+            Nama
+            <SortIcon isSorted={isSorted} />
+          </Button>
+        );
+      },
+    },
+    {
+      accessorKey: "qrcode",
+      header: () => "QR Code",
+      cell: ({ row }) => (
         <Button
-          className="bg-blue-200"
-          onClick={() => {
-            const newCandidates = [...candidates, { name: "" }];
-            setCandidates(newCandidates);
-          }}
           size={"sm"}
+          variant={"neutral"}
+          onClick={() => handleDownloadQrCode(row.original)}
         >
-          Tambah Peserta
+          Download <QrCodeIcon />
         </Button>
+      ),
+    },
+    {
+      accessorKey: "action",
+      header: () => null,
+      cell: ({ row }) => {
+        const member = row.original;
+        const editingMember = editingMembers[member.id];
+        return (
+          <div className="flex gap-2 justify-end">
+            {editingMember && (
+              <Button
+                disabled={loading}
+                onClick={() => handleUpdateMember(member)}
+                size={"sm"}
+                className="bg-green-400"
+              >
+                Simpan
+              </Button>
+            )}
+            <Button
+              disabled={loading}
+              onClick={() => {
+                handleRemoveMember(member.id);
+              }}
+              size={"sm"}
+              className="bg-red-400"
+            >
+              Hapus
+            </Button>
+          </div>
+        );
+      },
+    },
+  ];
+
+  const table = useReactTable({
+    data: members,
+    columns: columns,
+    onSortingChange: setSorting,
+    onColumnFiltersChange: setColumnFilters,
+    getCoreRowModel: getCoreRowModel(),
+    getPaginationRowModel: getPaginationRowModel(),
+    getSortedRowModel: getSortedRowModel(),
+    getFilteredRowModel: getFilteredRowModel(),
+    onColumnVisibilityChange: setColumnVisibility,
+    onRowSelectionChange: setRowSelection,
+    defaultColumn,
+    autoResetPageIndex,
+    state: {
+      sorting,
+      columnFilters,
+      columnVisibility,
+      rowSelection,
+    },
+    meta: {
+      updateData: (rowIndex, rowId, columnId, value) => {
+        // Skip page index reset until after next rerender
+        skipAutoResetPageIndex();
+        setEditingMembers((prev) => ({
+          ...prev,
+          [rowId]: true,
+        }));
+        setMembers((prev) =>
+          prev.map((row, index) => {
+            if (index === rowIndex) {
+              return {
+                ...prev[rowIndex]!,
+                [columnId]: value,
+              };
+            }
+            return row;
+          })
+        );
+      },
+    },
+  });
+
+  const fetchMembers = async () => {
+    if (!organizationId) return;
+    try {
+      const res = await MembersService.getMembersByOrganization(organizationId);
+      const data: Member[] = res.data.data;
+      setMembers(data);
+    } catch (error) {
+      toast.error("Gagl menambahkan data peserta");
+    }
+  };
+
+  useEffect(() => {
+    fetchMembers();
+  }, [organizationId]);
+
+  return (
+    <>
+      <div className="flex flex-col justify-between gap-2 mb-2">
+        <NewMemberForm
+          organizationId={organizationId}
+          onCreate={(member) => {
+            setMembers((prev) => [...prev, member]);
+          }}
+        />
+
+        <Input
+          placeholder="Cari peserta..."
+          value={(table.getColumn("name")?.getFilterValue() as string) ?? ""}
+          onChange={(event) =>
+            table.getColumn("name")?.setFilterValue(event.target.value)
+          }
+        />
       </div>
 
-      <Table className="border">
-        <TableHeader>
-          <TableRow className="bg-blue-500 hover:bg-blue-500">
-            <TableHead>Nama</TableHead>
-            <TableHead className="text-center">QR code</TableHead>
-            <TableHead></TableHead>
-          </TableRow>
-        </TableHeader>
+      <div className="border">
+        <Table>
+          <TableHeader>
+            {table.getHeaderGroups().map((headerGroup) => (
+              <TableRow
+                className="bg-blue-500 hover:bg-blue-500 text-foreground"
+                key={headerGroup.id}
+              >
+                {headerGroup.headers.map((header) => {
+                  return (
+                    <TableHead className="text-foreground" key={header.id}>
+                      {header.isPlaceholder
+                        ? null
+                        : flexRender(
+                            header.column.columnDef.header,
+                            header.getContext()
+                          )}
+                    </TableHead>
+                  );
+                })}
+              </TableRow>
+            ))}
+          </TableHeader>
 
-        <TableBody>
-          {candidates.map((candidate, index) => {
-            return (
-              <TableRow key={index} className="bg-blue-200 hover:bg-blue-300">
-                <TableCell>
-                  <Input
-                    type="text"
-                    placeholder="Name"
-                    className="border border-gray-300 rounded p-2"
-                    size={5}
-                    minLength={3}
-                    maxLength={255}
-                    value={candidate.name}
-                    onChange={(e) => {
-                      const newCandidates = [...candidates];
-                      newCandidates[index].name = e.target.value;
-                      setCandidates(newCandidates);
-                    }}
-                  />
-                </TableCell>
-                <TableCell></TableCell>
-                <TableCell className="text-right">
-                  <div className="flex gap-2 justify-end">
-                    <Button
-                      onClick={() => {
-                        handleSaveMember(candidate, index);
-                      }}
-                      disabled={
-                        !candidate.name ||
-                        candidate.name.length < 3 ||
-                        candidate.name.length > 255 ||
-                        loading
-                      }
-                      className="bg-green-500 disabled:bg-gray-400"
-                    >
-                      Simpan
-                    </Button>
-                    <Button
-                      className="bg-red-400"
-                      onClick={() => {
-                        const newCandidates = candidates.filter(
-                          (_, i) => i !== index
-                        );
-                        setCandidates(newCandidates);
-                      }}
-                    >
-                      Hapus
-                    </Button>
-                  </div>
+          <TableBody>
+            {table.getRowModel().rows?.length ? (
+              table.getRowModel().rows.map((row) => (
+                <TableRow
+                  className="bg-blue-200 hover:bg-blue-300 text-foreground data-[state=selected]:bg-main data-[state=selected]:text-main-foreground"
+                  key={row.id}
+                  data-state={row.getIsSelected() && "selected"}
+                >
+                  {row.getVisibleCells().map((cell) => (
+                    <TableCell className="px-4 py-2" key={cell.id}>
+                      {flexRender(
+                        cell.column.columnDef.cell,
+                        cell.getContext()
+                      )}
+                    </TableCell>
+                  ))}
+                </TableRow>
+              ))
+            ) : (
+              <TableRow>
+                <TableCell
+                  colSpan={columns.length}
+                  className="h-24 text-center"
+                >
+                  No results.
                 </TableCell>
               </TableRow>
-            );
-          })}
+            )}
+          </TableBody>
+        </Table>
+      </div>
 
-          {currentData.map((member: Member) => (
-            <TableRow key={member.id} className="bg-blue-200 hover:bg-blue-300">
-              <TableCell>
-                {editingMembers[member.id] ? (
-                  <Input
-                    type="text"
-                    placeholder="Name"
-                    className="border border-gray-300 rounded p-2"
-                    size={5}
-                    minLength={3}
-                    maxLength={255}
-                    value={editingMembers[member.id].name}
-                    onChange={(e) => {
-                      setEditingMembers((prev) => ({
-                        ...prev,
-                        [member.id]: {
-                          ...prev[member.id],
-                          name: e.target.value,
-                        },
-                      }));
-                    }}
-                  />
-                ) : (
-                  member.name
-                )}
-              </TableCell>
-
-              <TableCell className="text-center">
-                <Button
-                  size={"sm"}
-                  variant={"neutral"}
-                  onClick={() => handleDownloadQrCode(member)}
-                >
-                  Download <QrCodeIcon />
-                </Button>
-              </TableCell>
-
-              <TableCell className="text-right max-w-[50px]">
-                <div className="flex gap-2 justify-end">
-                  {editingMembers[member.id] ? (
-                    <>
-                      <Button
-                        disabled={loading}
-                        onClick={() => {
-                          setEditingMembers((prev) => {
-                            delete prev[member.id];
-                            return { ...prev };
-                          });
-                        }}
-                        size={"sm"}
-                        className="bg-gray-200"
-                      >
-                        Batal
-                      </Button>
-                      <Button
-                        disabled={loading}
-                        onClick={() => {
-                          handleUpdateMember(editingMembers[member.id]);
-                        }}
-                        size={"sm"}
-                        className="bg-green-400"
-                      >
-                        Simpan
-                      </Button>
-                      <Button
-                        disabled={loading}
-                        onClick={() => {
-                          handleRemoveMember(member.id);
-                        }}
-                        size={"sm"}
-                        className="bg-red-400"
-                      >
-                        Hapus
-                      </Button>
-                    </>
-                  ) : (
-                    <Button
-                      onClick={() => {
-                        setEditingMembers((prev) => {
-                          prev[member.id] = member;
-                          return { ...prev };
-                        });
-                      }}
-                      size={"sm"}
-                      className="bg-blue-500"
-                    >
-                      Edit
-                    </Button>
-                  )}
-                </div>
-              </TableCell>
-            </TableRow>
-          ))}
-        </TableBody>
-
-        <TableFooter>
-          <TableRow>
-            <TableCell colSpan={3}>
-              <Pagination
-                currentPage={currentPage}
-                totalPages={totalPages}
-                goLeft={goLeft}
-                goRight={goRight}
-              />
-            </TableCell>
-          </TableRow>
-        </TableFooter>
-      </Table>
-    </div>
+      <div className="flex items-center justify-end space-x-2 py-4">
+        <div className="space-x-2">
+          <Button
+            variant="noShadow"
+            size="sm"
+            onClick={() => table.previousPage()}
+            disabled={!table.getCanPreviousPage()}
+          >
+            Previous
+          </Button>
+          <Button
+            variant="noShadow"
+            size="sm"
+            onClick={() => table.nextPage()}
+            disabled={!table.getCanNextPage()}
+          >
+            Next
+          </Button>
+        </div>
+      </div>
+    </>
   );
 };

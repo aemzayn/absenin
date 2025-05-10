@@ -17,8 +17,8 @@ Members
 - [x] Add members
 - [x] Delete member
 - [x] Edit member
-- [ ] Member table pagination and search
-- [ ] Responsive UI
+- [x] Member table pagination and search
+- [x] Responsive UI
 
 Events
 
