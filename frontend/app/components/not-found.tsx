@@ -1,5 +1,6 @@
 import { useNavigate } from "react-router";
 import { Button } from "./ui/button";
+import { HomeIcon } from "lucide-react";
 
 export const NotFound = () => {
   const navigate = useNavigate();
@@ -9,10 +10,16 @@ export const NotFound = () => {
   };
 
   return (
-    <div>
-      <h1>404 Not Found</h1>
-      <p>The content you are looking for does not exist.</p>
-      <Button onClick={handleHomeClick}>Home</Button>
+    <div className="flex flex-col items-center justify-center gap-4">
+      <h1 className="text-2xl">Kamu tersesat</h1>
+      <p>
+        Tidak ada kehidupan disini. Apapun itu mungkin sudah dihapus atau memang
+        tidak pernah ada
+      </p>
+      <Button onClick={handleHomeClick}>
+        Kembali ke halaman awal
+        <HomeIcon />
+      </Button>
     </div>
   );
 };

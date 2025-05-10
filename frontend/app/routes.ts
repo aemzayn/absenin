@@ -28,4 +28,6 @@ export default [
     route("login", "routes/login.tsx"),
     route("register", "routes/register.tsx"),
   ]),
+
+  route("/*", "routes/not-found.tsx"),
 ] satisfies RouteConfig;
