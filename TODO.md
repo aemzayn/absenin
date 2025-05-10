@@ -10,6 +10,7 @@ Organization
 - [x] Create organization
 - [ ] Edit organization
 - [ ] Delete organization
+- [ ] Invite users to organization
 
 Members
 
@@ -25,7 +26,7 @@ Events
 - [x] Create event page
 - [ ] Edit event page
 - [ ] Delete event
-- [ ] Event table pagination and search
+- [x] Event table pagination and search
 - [ ] Responsive UI
 
 QR Code

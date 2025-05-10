@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Form } from "react-router";
 import { Spinner } from "./icons/spinner";
 import { Button } from "./ui/button";
@@ -15,15 +15,23 @@ dayjs.extend(localize);
 
 type Props = {
   organizationId: number;
+  eventId?: number;
   onCreate?: (event: Event) => void;
   onFailure?: (error: Error) => void;
 };
 
-export const EventForm = ({ organizationId, onCreate, onFailure }: Props) => {
+export const EventForm = ({
+  organizationId,
+  eventId,
+  onCreate,
+  onFailure,
+}: Props) => {
   const [submitting, setSubmitting] = useState(false);
   const [date, setDate] = useState<Date | undefined>(
     dayjs().add(1, "day").toDate()
   );
+
+  const formRef = useRef<HTMLFormElement>(null);
 
   const eventDateFormatted = date ? dayjs(date).format("LL") : undefined;
 
@@ -54,9 +62,40 @@ export const EventForm = ({ organizationId, onCreate, onFailure }: Props) => {
     }
   };
 
+  useEffect(() => {
+    const fetchEvent = async () => {
+      if (!eventId) return;
+
+      try {
+        const res = await EventService.getEvent(eventId);
+        const event = res.data.data;
+
+        if (formRef.current) {
+          const nameInput = formRef.current.querySelector(
+            "#name"
+          ) as HTMLInputElement;
+          const locationInput = formRef.current.querySelector(
+            "#location"
+          ) as HTMLInputElement;
+          const descriptionInput = formRef.current.querySelector(
+            "#description"
+          ) as HTMLTextAreaElement;
+
+          nameInput.value = event.name;
+          locationInput.value = event.location || "";
+          descriptionInput.value = event.description || "";
+          setDate(new Date(event.date));
+        }
+      } catch (error) {
+        console.error("Error fetching event:", error);
+      }
+    };
+    fetchEvent();
+  }, [eventId]);
+
   return (
     <div className="p-5">
-      <Form onSubmit={handleCreate}>
+      <Form onSubmit={handleCreate} ref={formRef}>
         <div className="flex flex-col gap-6">
           <div className="grid gap-2">
             <Label htmlFor="name">Nama acara</Label>

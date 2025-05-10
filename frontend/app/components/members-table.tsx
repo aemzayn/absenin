@@ -1,9 +1,8 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Table,
   TableBody,
   TableCell,
-  TableFooter,
   TableHead,
   TableHeader,
   TableRow,
@@ -14,8 +13,6 @@ import { Button } from "./ui/button";
 import { toast } from "sonner";
 import { Input } from "./ui/input";
 import { downloadQRCode } from "~/lib/download-qr";
-import { usePagination } from "~/hooks/use-pagination";
-import { Pagination } from "./pagination";
 import {
   flexRender,
   getCoreRowModel,
@@ -28,7 +25,6 @@ import {
   type RowData,
   type SortingState,
   type VisibilityState,
-  type TableMeta,
 } from "@tanstack/react-table";
 import { SortIcon } from "./icons/sort-icon";
 import { QrCodeIcon } from "lucide-react";
@@ -38,8 +34,6 @@ import { NewMemberForm } from "./new-member-form";
 type Props = {
   organizationId: number;
 };
-
-type MemberCandidate = Pick<Member, "name">[];
 
 declare module "@tanstack/react-table" {
   interface TableMeta<TData extends RowData> {
@@ -82,7 +76,6 @@ export const MembersTable = ({ organizationId }: Props) => {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
-  const [newInputValue, setNewInputValue] = useState("");
   const [rowSelection, setRowSelection] = useState({});
   const [members, setMembers] = useState<Member[]>([]);
   const [loading, setLoading] = useState(false);
@@ -322,7 +315,7 @@ export const MembersTable = ({ organizationId }: Props) => {
                   colSpan={columns.length}
                   className="h-24 text-center"
                 >
-                  No results.
+                  Data tidak ditemukan
                 </TableCell>
               </TableRow>
             )}
