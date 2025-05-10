@@ -36,9 +36,12 @@ model Member {
 model Qrcode {
   id     Int    @id @default(autoincrement())
   qrcode String @db.Text
+  token  String @unique @db.Text
 
   member   Member @relation(fields: [memberId], references: [id], onDelete: Cascade)
   memberId Int    @unique
+
+  @@index([token])
 }
 
 model Organization {

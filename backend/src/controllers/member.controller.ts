@@ -2,6 +2,7 @@ import { NextFunction, Request, Response } from "express";
 import QRCode from "qrcode";
 import db from "../database";
 import { createQrCode } from "@/utils/create-qr";
+import { nanoid } from "nanoid";
 
 export async function getMembers(
   req: Request,
@@ -128,17 +129,15 @@ export async function registerMember(
       },
     });
 
-    const qrCode = await createQrCode(
-      JSON.stringify({
-        memberId: createdMember.id,
-        memberName: createdMember.name,
-      })
-    );
+    const token = nanoid(8);
+
+    const qrCode = await createQrCode(token);
 
     await db.qrcode.create({
       data: {
         memberId: createdMember.id,
         qrcode: qrCode,
+        token,
       },
     });
 
@@ -188,20 +187,16 @@ export async function registerMembers(
     const memberIds = [];
 
     for (const member of createdMembers) {
-      const qrCode = await QRCode.toDataURL(
-        JSON.stringify({
-          memberId: member.id,
-          memberName: member.name,
-        }),
-        {
-          errorCorrectionLevel: "H", // high error correction
-          margin: 1, // reduce margin to 1
-          width: 500, // resolution to 500x500
-        }
-      );
+      const token = nanoid(8);
+      const qrCode = await QRCode.toDataURL(token, {
+        errorCorrectionLevel: "H", // high error correction
+        margin: 1, // reduce margin to 1
+        width: 500, // resolution to 500x500
+      });
       qrCodes.push({
         memberId: member.id,
         qrcode: qrCode,
+        token,
       });
       memberIds.push(member.id);
     }

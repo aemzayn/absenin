@@ -8,6 +8,7 @@ const config = {
   ACCESS_TOKEN_SECRET: process.env.ACCESS_TOKEN_SECRET ?? "access_secret",
   REFRESH_TOKEN_SECRET: process.env.REFRESH_TOKEN_SECRET ?? "refresh_secret",
   DEFAULT_TIMEZONE: process.env.DEFAULT_TIMEZONE || "Europe/Istanbul",
+  QR_SECRET: process.env.QR_SECRET || "qr_secret",
 };
 
 export const isDev = config.nodeEnv === "development";
