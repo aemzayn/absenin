@@ -26,11 +26,7 @@ export default function Navbar() {
       <div className="container mx-auto p-4 flex items-center justify-between">
         <div className="flex items-center gap-5 font-bold">
           <Link to="/" className={className(isHome)}>
-            Home
-          </Link>
-
-          <Link to="/event" className={className(isEvent)}>
-            Acara
+            Daftar Acara
           </Link>
 
           <Link to="/organization" className={className(isOrganization)}>
