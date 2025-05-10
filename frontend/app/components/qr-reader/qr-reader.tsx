@@ -3,11 +3,13 @@ import QrFrame from "~/assets/qr-frame.svg";
 import { useEffect, useRef, useState } from "react";
 
 type Props = {
-  onScanSuccess?: (result: QrScanner.ScanResult) => void;
+  onScanSuccess?: (result: string | undefined) => void;
   onScanFail?: (err: string | Error) => void;
+  pause?: boolean;
 };
 
 export function QrReader({
+  pause = false,
   onScanFail: onScanFailProp,
   onScanSuccess: onScanSuccessProp,
 }: Props) {
@@ -23,12 +25,22 @@ export function QrReader({
   // Success
   const onScanSuccess = (result: QrScanner.ScanResult) => {
     setScannedResult(result?.data);
-    onScanSuccessProp?.(result);
+    onScanSuccessProp?.(result?.data);
   };
 
   const onScanFail = (err: string | Error) => {
     onScanFailProp?.(err);
   };
+
+  useEffect(() => {
+    if (scanner.current) {
+      if (pause) {
+        scanner.current.pause();
+      } else {
+        scanner.current.start();
+      }
+    }
+  }, [pause]);
 
   useEffect(() => {
     if (videoEl?.current && !scanner.current) {

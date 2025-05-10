@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { QrReader } from "~/components/qr-reader/qr-reader";
 import type { Route } from "./+types/scanner";
-import { redirect, useLoaderData } from "react-router";
+import { data, redirect, useLoaderData } from "react-router";
 import { EventService } from "~/services/event.service";
 import type { Event } from "~/interfaces/event";
 import { Button } from "~/components/ui/button";
@@ -27,7 +27,14 @@ export const clientLoader = async ({ params }: Route.ClientLoaderArgs) => {
 
 export default function ScannerPage({ loaderData }: Route.ComponentProps) {
   const [openQr, setOpenQt] = useState(false);
+  const [pauseScanner, setPauseScanner] = useState(false);
   const event: Event = loaderData.event;
+
+  const onScan = async (data: string | undefined) => {
+    if (!data) return;
+    setPauseScanner(true);
+    console.log(data);
+  };
 
   return (
     <div className="container mx-auto p-4 flex flex-col items-center">
@@ -37,7 +44,11 @@ export default function ScannerPage({ loaderData }: Route.ComponentProps) {
       </div>
 
       <div className="mt-4 w-full ">
-        {openQr ? <QrReader /> : <QrPlaceholder />}
+        {openQr ? (
+          <QrReader pause={pauseScanner} onScanSuccess={onScan} />
+        ) : (
+          <QrPlaceholder />
+        )}
       </div>
 
       <Button
