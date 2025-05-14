@@ -1,5 +1,9 @@
 name: publish
-on: [push]
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
 jobs:
   publish-hello-docker-image:
     runs-on: ubuntu-latest
