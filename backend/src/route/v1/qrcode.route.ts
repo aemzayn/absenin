@@ -2,7 +2,7 @@ import { Router } from "express";
 
 import * as controller from "../../controllers/qrcode.controller";
 import { query } from "express-validator";
-import { validateRequest } from "@/middleware/validate-request";
+import { validateRequest } from "../../middleware/validate-request";
 
 const router = Router();
 

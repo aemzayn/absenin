@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import QRCode from "qrcode";
 import db from "../database";
-import { createQrCode } from "@/utils/create-qr";
+import { createQrCode } from "../utils/create-qr";
 import { nanoid } from "nanoid";
 
 export async function getMembers(
