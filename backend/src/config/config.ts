@@ -9,6 +9,7 @@ const config = {
   REFRESH_TOKEN_SECRET: process.env.REFRESH_TOKEN_SECRET ?? "refresh_secret",
   DEFAULT_TIMEZONE: process.env.DEFAULT_TIMEZONE || "Europe/Istanbul",
   QR_SECRET: process.env.QR_SECRET || "qr_secret",
+  FRONTEND_URL: process.env.FRONTEND_URL || "http://localhost:3000",
 };
 
 export const isDev = config.nodeEnv === "development";

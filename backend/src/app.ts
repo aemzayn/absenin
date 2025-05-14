@@ -3,12 +3,19 @@ import cors from "cors";
 import morgan from "morgan";
 
 import apiV1 from "./route/v1";
+import config from "./config/config";
 
 const app = express();
 
-app.use(cors());
+if (config.nodeEnv === "production") {
+  app.use(cors({ origin: config.FRONTEND_URL }));
+  app.use(morgan("combined"));
+} else {
+  app.use(cors({ origin: config.FRONTEND_URL }));
+  app.use(morgan("dev"));
+}
+
 app.use(express.json());
-app.use(morgan("dev"));
 
 app.get("/", (req, res) => {
   res.send("Hello World!");
