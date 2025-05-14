@@ -1,5 +1,5 @@
 import { AxiosError } from "axios";
-import { Form, Link, redirect, type ActionFunctionArgs } from "react-router";
+import { Form, Link, redirect } from "react-router";
 import { ACCESS_TOKEN, REFRESH_TOKEN } from "~/api/constants";
 import { Button } from "~/components/ui/button";
 import {
@@ -15,6 +15,8 @@ import { Label } from "~/components/ui/label";
 import type { User } from "~/interfaces/user";
 import { toast } from "sonner";
 import { AuthService } from "~/services/auth.service";
+import { useState } from "react";
+import { cn } from "~/lib/utils";
 
 export function meta() {
   return [{ title: "Login" }];
@@ -36,38 +38,44 @@ type LoginResponseData = {
   user: User;
 };
 
-export async function clientAction({ request }: ActionFunctionArgs) {
-  const formData = await request.formData();
-  const email = formData.get("email") as string;
-  const password = formData.get("password") as string;
+export default function Login() {
+  const [submitting, setSubmitting] = useState(false);
 
-  try {
-    const res = await AuthService.login({ email, password });
-    const data = res.data as LoginResponseData;
-    const accessToken = data.data.accessToken;
-    const refreshToken = data.data.refreshToken;
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    try {
+      setSubmitting(true);
+      event.preventDefault();
+      const formData = new FormData(event.currentTarget);
+      const email = formData.get("email") as string;
+      const password = formData.get("password") as string;
 
-    sessionStorage.setItem(REFRESH_TOKEN, refreshToken);
-    sessionStorage.setItem(ACCESS_TOKEN, accessToken);
-  } catch (error) {
-    if (error instanceof AxiosError) {
-      const status = error.response?.status;
-      if (status === 404) {
-        toast("Akun tidak ditemukan");
-      } else if (status === 400) {
-        toast("Email atau kata sandi salah");
+      const res = await AuthService.login({ email, password });
+      const data = res.data as LoginResponseData;
+      const accessToken = data.data.accessToken;
+      const refreshToken = data.data.refreshToken;
+
+      sessionStorage.setItem(REFRESH_TOKEN, refreshToken);
+      sessionStorage.setItem(ACCESS_TOKEN, accessToken);
+    } catch (error) {
+      if (error instanceof AxiosError) {
+        const status = error.response?.status;
+        if (status === 404) {
+          toast("Akun tidak ditemukan");
+        } else if (status === 400) {
+          toast("Email atau kata sandi salah");
+        } else {
+          toast("Terjadi kesalahan saat login");
+        }
       } else {
         toast("Terjadi kesalahan saat login");
       }
-    } else {
-      toast("Terjadi kesalahan saat login");
+    } finally {
+      setSubmitting(false);
     }
-  }
-}
+  };
 
-export default function Login() {
   return (
-    <Form className="w-md mx-auto rounded-xl" method="post">
+    <Form className="min-w-sm md:min-w-md" onSubmit={handleSubmit}>
       <Card className="w-full max-w-sm">
         <CardHeader>
           <CardTitle>Masuk ke akun mu</CardTitle>
@@ -96,12 +104,18 @@ export default function Login() {
           </div>
         </CardContent>
         <CardFooter className="flex-col gap-2">
-          <Button type="submit" className="w-full">
+          <Button type="submit" className="w-full" disabled={submitting}>
             Login
           </Button>
           <div className="mt-4 text-center text-sm">
             Belum punya akun?{" "}
-            <Link to="/register" className="underline underline-offset-4">
+            <Link
+              to="/register"
+              className={cn(
+                "underline underline-offset-4",
+                submitting && "pointer-events-none"
+              )}
+            >
               Daftar
             </Link>
           </div>
