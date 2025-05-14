@@ -13,5 +13,6 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
       - name: Build the hello-docker Docker image
         run: |
+          cd backend
           docker build . --tag ghcr.io/aemzayn/absenin:latest
           docker push ghcr.io/aemzayn/absenin:latest
