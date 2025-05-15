@@ -5,7 +5,7 @@ on:
       - main
   workflow_dispatch:
 jobs:
-  publish-hello-docker-image:
+  publish-backend-image:
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -18,7 +18,7 @@ jobs:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
-      - name: Build the hello-docker Docker image
+      - name: Build the backend Docker image
         run: |
           cd backend
           docker build . --tag ghcr.io/aemzayn/absenin-backend:latest
