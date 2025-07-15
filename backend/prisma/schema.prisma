@@ -23,14 +23,25 @@ model User {
 }
 
 model Member {
-  id   Int    @id @default(autoincrement())
-  name String @db.VarChar(255)
+  id    Int     @id @default(autoincrement())
+  name  String  @db.VarChar(255)
+  image String? @db.Text
 
   qrcode Qrcode?
 
   Organization   Organization  @relation(fields: [organizationId], references: [id], onDelete: Cascade)
   organizationId Int
   EventMember    EventMember[]
+
+  Donor   Donor? @relation(fields: [donorId], references: [id], onDelete: SetNull)
+  donorId Int?
+}
+
+model Donor {
+  id       Int      @id @default(autoincrement())
+  name     String   @db.VarChar(255)
+  memberId Int?
+  Member   Member[]
 }
 
 model Qrcode {
