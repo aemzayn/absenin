@@ -1,4 +1,4 @@
-import { Badge } from "./ui/badge";
+import { Badge } from "primereact/badge";
 
 type Props = {
   isAttended: boolean;
@@ -6,8 +6,8 @@ type Props = {
 
 export const AttendeeBadge = ({ isAttended }: Props) => {
   return isAttended ? (
-    <Badge variant="success">Hadir</Badge>
+    <Badge severity="success">Hadir</Badge>
   ) : (
-    <Badge variant="warning">Belum hadir</Badge>
+    <Badge severity="warning">Belum hadir</Badge>
   );
 };

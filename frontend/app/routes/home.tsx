@@ -17,7 +17,7 @@ export default function Home({ loaderData }: Route.ComponentProps) {
   const events: Event[] = loaderData.events;
 
   return (
-    <div className="container mx-auto p-4">
+    <div>
       <EventListHome events={events} />
     </div>
   );

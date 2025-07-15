@@ -1,5 +1,5 @@
 import type { Event } from "~/interfaces/event";
-import { EventCardHome } from "./event-card-home";
+import { EventCardHome } from "./card/event-card-home";
 import { groupEvents } from "~/lib/group-events";
 import { useMemo } from "react";
 
@@ -15,21 +15,19 @@ export const EventListHome = ({ events }: Props) => {
   }, [events]);
 
   return (
-    <div className="mt-4 flex flex-col gap-4">
+    <div>
       {totalEvents === 0 && (
-        <div className="flex flex-col items-center justify-center">
-          <h2 className="text-lg font-semibold">Tidak ada acara</h2>
-          <p className="text-gray-500">
+        <div>
+          <h2>Tidak ada acara</h2>
+          <p>
             Saat ini tidak ada acara yang tersedia. Silahkan membuat acara baru.
           </p>
         </div>
       )}
 
       <div>
-        <h1 className="text-lg font-semibold mb-2">
-          Acara hari ini ({todayEvents.length} acara)
-        </h1>
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
+        <h1>Acara hari ini ({todayEvents.length} acara)</h1>
+        <div>
           {todayEvents.map((event: Event) => (
             <EventCardHome key={event.id} event={event} />
           ))}
@@ -38,10 +36,8 @@ export const EventListHome = ({ events }: Props) => {
 
       {thisWeekEvents.length > 0 && (
         <div>
-          <h1 className="text-lg font-semibold mb-2">
-            Acara pekan ini ({thisWeekEvents.length} acara)
-          </h1>
-          <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
+          <h1>Acara pekan ini ({thisWeekEvents.length} acara)</h1>
+          <div>
             {thisWeekEvents.map((event: Event) => (
               <EventCardHome key={event.id} event={event} />
             ))}
@@ -50,11 +46,9 @@ export const EventListHome = ({ events }: Props) => {
       )}
 
       {futureEvents.length > 0 && (
-        <div className="mt-4">
-          <h1 className="text-lg font-semibold mb-2">
-            Acara mendatang ({futureEvents.length} acara)
-          </h1>
-          <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
+        <div>
+          <h1>Acara mendatang ({futureEvents.length} acara)</h1>
+          <div>
             {futureEvents.map((event: Event) => (
               <EventCardHome key={event.id} event={event} />
             ))}

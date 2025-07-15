@@ -1,14 +1,13 @@
 import { useState } from "react";
 import { Form } from "react-router";
-import { Input } from "./ui/input";
-import { Label } from "./ui/label";
-import { Button } from "./ui/button";
-import { Spinner } from "./icons/spinner";
+import { Spinner } from "../../icons/spinner";
 import { OrganizationService } from "~/services/organization.service";
 import type {
   CreateOrganization,
   Organization,
 } from "~/interfaces/organization";
+import { InputText } from "primereact/inputtext";
+import { Button } from "primereact/button";
 
 type Props = {
   onCreate?: (formData: Organization) => void;
@@ -45,10 +44,10 @@ export const OrganizationForm = ({ onCreate, onFailure }: Props) => {
 
   return (
     <Form onSubmit={handleCreate}>
-      <div className="flex flex-col gap-6">
-        <div className="grid gap-2">
-          <Label htmlFor="name">Nama organisasi</Label>
-          <Input
+      <div>
+        <div>
+          <label htmlFor="name">Nama organisasi</label>
+          <InputText
             id="name"
             name="name"
             type="text"
@@ -59,16 +58,14 @@ export const OrganizationForm = ({ onCreate, onFailure }: Props) => {
         </div>
       </div>
 
-      <Button type="submit" className="mt-4" disabled={submitting}>
-        {submitting ? (
-          <>
-            Sedang membuat organisasi barumu...
-            <Spinner />
-          </>
-        ) : (
-          "Buat sekarang"
-        )}
-      </Button>
+      <Button
+        type="submit"
+        disabled={submitting}
+        loading={submitting}
+        label={
+          submitting ? "Sedang membuat organisasi barumu..." : "Buat sekarang"
+        }
+      ></Button>
     </Form>
   );
 };

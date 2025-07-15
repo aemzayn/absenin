@@ -20,10 +20,10 @@ export default function Members({ loaderData }: Route.ComponentProps) {
   const members: Member[] = loaderData.members;
 
   return (
-    <div className="container mx-auto p-4">
+    <div>
       <h1>Members page</h1>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mt-4">
+      <div>
         {members.map((member) => (
           <MemberCard key={member.id} member={member} />
         ))}
@@ -36,7 +36,7 @@ const MemberCard = ({ member }: { member: Member }) => {
   const qrCode = member.qrcode?.qrcode;
 
   return (
-    <div className="flex flex-col items-center justify-center p-4 border rounded-lg shadow-md">
+    <div>
       <h2>{member.name}</h2>
       {qrCode && (
         <img

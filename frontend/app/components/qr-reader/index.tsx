@@ -1,6 +1,7 @@
 import QrScanner from "qr-scanner";
 import QrFrame from "~/assets/qr-frame.svg";
 import { useEffect, useRef, useState } from "react";
+import "./qr-reader.scss";
 
 type Props = {
   onScanSuccess?: (result: string | undefined) => void;

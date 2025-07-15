@@ -1,18 +1,11 @@
 import { OrganizationService } from "~/services/organization.service";
 import type { Organization } from "~/interfaces/organization";
-import { Button } from "~/components/ui/button";
 import { useState } from "react";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "~/components/ui/dialog";
-import { OrganizationForm } from "~/components/organization-form";
-import { toast } from "sonner";
+import { OrganizationForm } from "~/components/form/organization-form";
 import { useLoaderData, useRevalidator } from "react-router";
 import { OrganizationList } from "~/components/organization-list";
+import { Dialog } from "primereact/dialog";
+import { Button } from "primereact/button";
 
 export function meta() {
   return [{ title: "My Organization" }];
@@ -38,44 +31,36 @@ export default function OrganizationPage() {
 
   const handleCreateOrganization = () => {
     setShowForm(false);
-    toast.success("Organisasi berhasil dibuat");
     revalidate();
   };
 
-  const handleFailCreateOrganization = () => {
-    toast.error("Gagal membuat organisasi");
-  };
+  const handleFailCreateOrganization = () => {};
 
   return (
     <div>
-      <Dialog open={showForm} onOpenChange={setShowForm}>
-        {totalOrganizations === 0 && (
-          <div className="flex flex-col items-center justify-center">
-            <h2 className="text-lg font-semibold">
-              Organisasi tidak ditemukan
-            </h2>
-            <p className="text-gray-500">
+      {totalOrganizations === 0 && (
+        <>
+          <div>
+            <h2>Organisasi tidak ditemukan</h2>
+            <p>
               Anda belum memiliki organisasi. Silakan buat organisasi baru untuk
               memulai.
             </p>
           </div>
-        )}
 
-        <DialogTrigger asChild>
-          <Button className="mt-4" size={"sm"}>
-            Buat organisasi
-          </Button>
-        </DialogTrigger>
+          <Button onClick={() => setShowForm(true)}>Buat organisasi</Button>
+        </>
+      )}
 
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Buat organisasi</DialogTitle>
-          </DialogHeader>
-          <OrganizationForm
-            onCreate={handleCreateOrganization}
-            onFailure={handleFailCreateOrganization}
-          />
-        </DialogContent>
+      <Dialog
+        visible={showForm}
+        onHide={() => setShowForm(false)}
+        header="Buat Organisasi"
+      >
+        <OrganizationForm
+          onCreate={handleCreateOrganization}
+          onFailure={handleFailCreateOrganization}
+        />
       </Dialog>
 
       <div className="mt-4">

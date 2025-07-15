@@ -1,19 +1,14 @@
 import { useState } from "react";
-import { QrReader } from "~/components/qr-reader/qr-reader";
+import { QrReader } from "~/components/qr-reader";
 import type { Route } from "./+types/scanner";
 import { redirect } from "react-router";
 import { EventService } from "~/services/event.service";
 import type { Event } from "~/interfaces/event";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from "~/components/ui/dialog";
 import { QrService } from "~/services/qr.service";
 import { AxiosError } from "axios";
 import { Check, X } from "lucide-react";
-import { Button } from "~/components/ui/button";
+import { Dialog } from "primereact/dialog";
+import { Button } from "primereact/button";
 
 export function meta() {
   return [{ title: "Scanner" }];
@@ -80,63 +75,54 @@ export default function ScannerPage({ loaderData }: Route.ComponentProps) {
         <h1 className="text-2xl">{event.name}</h1>
       </div>
 
-      <Dialog open={showDialog} onOpenChange={setShowDialog}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>
-              {isVerifying
-                ? "QR Code sedang diverifikasi..."
-                : "Verifikasi selesai"}
-            </DialogTitle>
-          </DialogHeader>
+      <Dialog
+        visible={showDialog}
+        onHide={() => setShowDialog(false)}
+        header="Verifikasi QR Code"
+      >
+        <div className="flex flex-col items-center">
+          {isVerifying ? (
+            <div className="flex items-center justify-center h-32">
+              <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-blue-500"></div>
+            </div>
+          ) : (
+            <div className="flex items-center justify-center">
+              {verificationResult ? (
+                <div className="text-center">
+                  <h2 className="text-lg font-semibold">QR Code Valid</h2>
+                  <Check className="text-blue-500 h-25 w-25" />
+                  <p className="text-sm text-gray-500">
+                    QR Code berhasil diverifikasi.
+                  </p>
+                  <p className="text-sm text-gray-500">
+                    Anda dapat menutup jendela ini.
+                  </p>
+                </div>
+              ) : (
+                <div className="flex flex-col items-center">
+                  <h2 className="text-lg font-semibold">QR Code Tidak Valid</h2>
+                  <X className="text-red-500  h-25 w-25" />
+                  <p className="text-sm text-gray-500">{errorMessage}</p>
+                  <p className="text-sm text-gray-500">Silakan coba lagi.</p>
+                </div>
+              )}
+            </div>
+          )}
 
-          <div className="flex flex-col items-center">
-            {isVerifying ? (
-              <div className="flex items-center justify-center h-32">
-                <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-blue-500"></div>
-              </div>
-            ) : (
-              <div className="flex items-center justify-center">
-                {verificationResult ? (
-                  <div className="text-center">
-                    <h2 className="text-lg font-semibold">QR Code Valid</h2>
-                    <Check className="text-blue-500 h-25 w-25" />
-                    <p className="text-sm text-gray-500">
-                      QR Code berhasil diverifikasi.
-                    </p>
-                    <p className="text-sm text-gray-500">
-                      Anda dapat menutup jendela ini.
-                    </p>
-                  </div>
-                ) : (
-                  <div className="flex flex-col items-center">
-                    <h2 className="text-lg font-semibold">
-                      QR Code Tidak Valid
-                    </h2>
-                    <X className="text-red-500  h-25 w-25" />
-                    <p className="text-sm text-gray-500">{errorMessage}</p>
-                    <p className="text-sm text-gray-500">Silakan coba lagi.</p>
-                  </div>
-                )}
-              </div>
-            )}
-
-            <Button
-              className="mt-4"
-              variant={verificationResult ? "default" : "neutral"}
-              onClick={() => {
-                setShowDialog(false);
-                setPauseScanner(false);
-                setErrorMessage("");
-              }}
-            >
-              {verificationResult ? "Tutup" : "Coba Lagi"}
-            </Button>
-          </div>
-        </DialogContent>
+          <Button
+            className="mt-4"
+            onClick={() => {
+              setShowDialog(false);
+              setPauseScanner(false);
+              setErrorMessage("");
+            }}
+          >
+            {verificationResult ? "Tutup" : "Coba Lagi"}
+          </Button>
+        </div>
       </Dialog>
 
-      <div className="mt-4 w-full ">
+      <div>
         <QrReader pause={pauseScanner} onScanSuccess={onScan} />
       </div>
     </div>

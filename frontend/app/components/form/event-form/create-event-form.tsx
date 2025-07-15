@@ -1,16 +1,13 @@
 import { useState } from "react";
 import { Form } from "react-router";
-import { Spinner } from "./icons/spinner";
-import { Button } from "./ui/button";
-import { Input } from "./ui/input";
-import { Label } from "./ui/label";
 import type { CreateEvent, Event } from "~/interfaces/event";
-import { Textarea } from "./ui/textarea";
-import { Calendar } from "./ui/calendar";
 import dayjs from "dayjs";
 import localize from "dayjs/plugin/localizedFormat";
 import { EventService } from "~/services/event.service";
-import { toast } from "sonner";
+import { Button } from "primereact/button";
+import { InputTextarea } from "primereact/inputtextarea";
+import { InputText } from "primereact/inputtext";
+import { Calendar } from "primereact/calendar";
 
 dayjs.extend(localize);
 
@@ -21,9 +18,7 @@ type Props = {
 
 export const CreateEventForm = ({ organizationId, onCreate }: Props) => {
   const [submitting, setSubmitting] = useState(false);
-  const [date, setDate] = useState<Date | undefined>(
-    dayjs().add(1, "day").toDate()
-  );
+  const [date, setDate] = useState<Date | null>(dayjs().add(1, "day").toDate());
 
   const eventDateFormatted = date ? dayjs(date).format("LL") : undefined;
 
@@ -46,9 +41,7 @@ export const CreateEventForm = ({ organizationId, onCreate }: Props) => {
 
       const newEvent = res.data.data;
       onCreate?.(newEvent);
-      toast.success("Berhasil membuat acara baru");
     } catch (error) {
-      toast.error("Gagal membuat acara baru");
     } finally {
       setSubmitting(false);
     }
@@ -56,10 +49,10 @@ export const CreateEventForm = ({ organizationId, onCreate }: Props) => {
 
   return (
     <Form onSubmit={handleCreate}>
-      <div className="flex flex-col gap-6">
-        <div className="grid gap-2">
-          <Label htmlFor="name">Nama acara</Label>
-          <Input
+      <div>
+        <div>
+          <label htmlFor="name">Nama acara</label>
+          <InputText
             id="name"
             name="name"
             type="text"
@@ -70,33 +63,30 @@ export const CreateEventForm = ({ organizationId, onCreate }: Props) => {
           />
         </div>
 
-        <div className="grid gap-2">
-          <div className="flex items-center gap-2">
+        <div>
+          <div>
             <span>Tanggal acara</span>
-            {eventDateFormatted && (
-              <span className="text-sm text-gray-500">
-                {eventDateFormatted}
-              </span>
-            )}
+            {eventDateFormatted && <span>{eventDateFormatted}</span>}
           </div>
 
-          <div className="flex items-center">
+          <div>
             <Calendar
               id="date"
-              mode="single"
-              selected={date}
-              onSelect={setDate}
-              disabled={{
-                before: dayjs().subtract(7, "day").toDate(),
-              }}
-              required
+              name="date"
+              value={date}
+              onChange={(e) => setDate(e.value ?? null)}
+              showIcon
+              showButtonBar
+              dateFormat="dd/mm/yy"
+              placeholder="Pilih tanggal acara"
+              disabled={submitting}
             />
           </div>
         </div>
 
-        <div className="grid gap-2">
-          <Label htmlFor="location">Lokasi acara (opsional)</Label>
-          <Input
+        <div>
+          <label htmlFor="location">Lokasi acara (opsional)</label>
+          <InputText
             id="location"
             name="location"
             type="text"
@@ -107,9 +97,9 @@ export const CreateEventForm = ({ organizationId, onCreate }: Props) => {
           />
         </div>
 
-        <div className="grid gap-2">
-          <Label htmlFor="description">Deskripsi acara (opsional)</Label>
-          <Textarea
+        <div>
+          <label htmlFor="description">Deskripsi acara (opsional)</label>
+          <InputTextarea
             id="description"
             name="description"
             minLength={3}
@@ -120,15 +110,8 @@ export const CreateEventForm = ({ organizationId, onCreate }: Props) => {
         </div>
       </div>
 
-      <Button type="submit" className="mt-4" disabled={submitting}>
-        {submitting ? (
-          <>
-            Sedang membuat event...
-            <Spinner />
-          </>
-        ) : (
-          "Buat sekarang"
-        )}
+      <Button type="submit" disabled={submitting}>
+        {submitting ? <>Sedang membuat event...</> : "Buat sekarang"}
       </Button>
     </Form>
   );

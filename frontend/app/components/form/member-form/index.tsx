@@ -1,11 +1,10 @@
 import { useRef, useState } from "react";
 import { Form } from "react-router";
-import { Button } from "./ui/button";
-import { Spinner } from "./icons/spinner";
-import { Input } from "./ui/input";
+import { Spinner } from "../../icons/spinner";
 import type { Member } from "~/interfaces/member";
 import { MembersService } from "~/services/members.service";
-import { toast } from "sonner";
+import { InputText } from "primereact/inputtext";
+import { Button } from "primereact/button";
 
 type Props = {
   organizationId: number;
@@ -29,13 +28,11 @@ export const NewMemberForm = ({ organizationId, onCreate }: Props) => {
 
       const member: Member = res.data.data;
       onCreate?.(member);
-      toast.success("Peserta berhasil ditambahkan");
 
       // Reset the form
       formRef.current?.reset();
     } catch (error) {
       console.error("Error creating member:", error);
-      toast.error("Gagal menambahkan peserta");
     } finally {
       setSubmitting(false);
     }
@@ -43,8 +40,8 @@ export const NewMemberForm = ({ organizationId, onCreate }: Props) => {
 
   return (
     <Form onSubmit={handleCreate} ref={formRef}>
-      <div className="flex items-center gap-2">
-        <Input
+      <div>
+        <InputText
           id="name"
           name="name"
           type="text"
@@ -55,7 +52,7 @@ export const NewMemberForm = ({ organizationId, onCreate }: Props) => {
           placeholder="Masukkan nama peserta"
         />
 
-        <Button variant={"noShadow"} type="submit" disabled={submitting}>
+        <Button type="submit" disabled={submitting}>
           {submitting ? (
             <>
               Sedang menambahkan...

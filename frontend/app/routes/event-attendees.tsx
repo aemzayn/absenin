@@ -1,7 +1,7 @@
 import { EventService } from "~/services/event.service";
 import type { Route } from "./+types/event-attendees";
 import type { Attendee } from "~/interfaces/attendee";
-import { AttendeesTable } from "~/components/attendees-table";
+import { AttendeesTable } from "~/components/table/attendees-table";
 
 export function meta() {
   return [{ title: "Daftar Hadir" }];
@@ -27,8 +27,7 @@ export default function EventAttendeesPage({
 
   return (
     <div>
-      <h1 className="text-2xl font-bold">Daftar Hadir</h1>
-
+      <h1>Daftar Hadir</h1>
       <AttendeesTable attendees={attendees} />
     </div>
   );
