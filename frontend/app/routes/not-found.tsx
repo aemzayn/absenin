@@ -4,10 +4,6 @@ export const meta = () => {
   return [{ title: "Halaman tidak ditemukan" }];
 };
 
-export default function NotFoundPage() {
-  return (
-    <div>
-      <NotFound />
-    </div>
-  );
+export default function NotFoundRoutes() {
+  return <NotFound />;
 }

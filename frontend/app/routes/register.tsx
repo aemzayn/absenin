@@ -49,7 +49,7 @@ export async function clientAction({ request }: ActionFunctionArgs) {
   }
 }
 
-export default function RegisterPage() {
+export default function RegisterRoute() {
   return (
     <Form method="post">
       <Card title="Daftar Akun">
@@ -91,14 +91,9 @@ export default function RegisterPage() {
             />
           </div>
         </div>
-        <Button type="submit" className="w-full">
-          Daftar
-        </Button>
-        <div className="mt-4 text-center text-sm">
-          Sudah punya akun?{" "}
-          <Link to="/login" className="underline underline-offset-4">
-            Masuk
-          </Link>
+        <Button type="submit">Daftar</Button>
+        <div>
+          Sudah punya akun? <Link to="/login">Masuk</Link>
         </div>
       </Card>
     </Form>

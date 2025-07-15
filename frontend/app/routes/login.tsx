@@ -58,7 +58,7 @@ export async function clientAction({ request }: ActionFunctionArgs) {
   }
 }
 
-export default function Login() {
+export default function LoginRoute() {
   return (
     <Form method="post">
       <Card title="Login">

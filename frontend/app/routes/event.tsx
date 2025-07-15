@@ -1,3 +1,3 @@
-export default function EventPage() {
+export default function EventsRoute() {
   return <div>Event Page</div>;
 }
