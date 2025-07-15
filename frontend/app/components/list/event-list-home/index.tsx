@@ -1,5 +1,5 @@
 import type { Event } from "~/interfaces/event";
-import { EventCardHome } from "./card/event-card-home";
+import { EventCardHome } from "../../card/event-card-home";
 import { groupEvents } from "~/lib/group-events";
 import { useMemo } from "react";
 

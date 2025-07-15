@@ -6,5 +6,12 @@
   .navbar-links {
     display: flex;
     gap: 1rem;
+    a {
+      color: white;
+      text-decoration: none;
+      &.active {
+        color: #5fa5fa;
+      }
+    }
   }
 }

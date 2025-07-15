@@ -8,6 +8,7 @@ import { Button } from "primereact/button";
 import { InputTextarea } from "primereact/inputtextarea";
 import { InputText } from "primereact/inputtext";
 import { Calendar } from "primereact/calendar";
+import { isProd } from "~/constants/prod";
 
 dayjs.extend(localize);
 
@@ -27,9 +28,9 @@ export const CreateEventForm = ({ organizationId, onCreate }: Props) => {
       setSubmitting(true);
       event.preventDefault();
       const formData = new FormData(event.currentTarget);
-      const name = formData.get("name")! as string;
-      const location = formData.get("location") as string;
-      const description = formData.get("description") as string;
+      const name = formData.get("absenin_event_name")! as string;
+      const location = formData.get("absenin_event_location") as string;
+      const description = formData.get("absenin_event_description") as string;
 
       const res = await EventService.createEvent({
         name,
@@ -48,47 +49,56 @@ export const CreateEventForm = ({ organizationId, onCreate }: Props) => {
   };
 
   return (
-    <Form onSubmit={handleCreate}>
-      <div>
-        <div>
-          <label htmlFor="name">Nama acara</label>
+    <Form onSubmit={handleCreate} className="form">
+      <div className="form-field form-field-full">
+        <div className="p-inputgroup flex-1">
+          <label htmlFor="absenin_event_name" className="p-inputgroup-addon">
+            Nama Acara
+          </label>
           <InputText
-            id="name"
-            name="name"
+            id="absenin_event_name"
+            name="absenin_event_name"
             type="text"
             required
             minLength={3}
             maxLength={100}
+            placeholder="Bakti sosial"
             disabled={submitting}
           />
         </div>
+      </div>
 
-        <div>
-          <div>
-            <span>Tanggal acara</span>
-            {eventDateFormatted && <span>{eventDateFormatted}</span>}
-          </div>
-
-          <div>
-            <Calendar
-              id="date"
-              name="date"
-              value={date}
-              onChange={(e) => setDate(e.value ?? null)}
-              showIcon
-              showButtonBar
-              dateFormat="dd/mm/yy"
-              placeholder="Pilih tanggal acara"
-              disabled={submitting}
-            />
-          </div>
+      <div className="form-field form-field-full">
+        <div className="p-inputgroup flex-1">
+          <label htmlFor="absenin_event_date" className="p-inputgroup-addon">
+            Tanggal acara
+          </label>
+          <Calendar
+            id="absenin_event_date"
+            name="absenin_event_date"
+            value={date}
+            onChange={(e) => setDate(e.value ?? null)}
+            showIcon
+            showButtonBar
+            dateFormat="dd/mm/yy"
+            placeholder="Pilih tanggal acara"
+            disabled={submitting}
+            minDate={isProd ? dayjs().subtract(1, "day").toDate() : undefined}
+          />
         </div>
+      </div>
 
-        <div>
-          <label htmlFor="location">Lokasi acara (opsional)</label>
+      <div className="form-field form-field-full">
+        <div className="p-inputgroup flex-1">
+          <label
+            className="p-inputgroup-addon"
+            htmlFor="absenin_event_location"
+          >
+            Lokasi acara (opsional)
+          </label>
           <InputText
-            id="location"
-            name="location"
+            id="absenin_event_location"
+            name="absenin_event_location"
             type="text"
             minLength={3}
             maxLength={255}
@@ -96,23 +106,33 @@ export const CreateEventForm = ({ organizationId, onCreate }: Props) => {
             placeholder="Contoh: Jakarta, Indonesia"
           />
         </div>
+      </div>
 
-        <div>
-          <label htmlFor="description">Deskripsi acara (opsional)</label>
+      <div className="form-field form-field-full">
+        <div className="p-inputgroup flex-1">
+          <label
+            className="p-inputgroup-addon"
+            htmlFor="absenin_event_description"
+          >
+            Deskripsi acara (opsional)
+          </label>
           <InputTextarea
-            id="description"
-            name="description"
+            id="absenin_event_description"
+            name="absenin_event_description"
             minLength={3}
             maxLength={255}
+            rows={4}
             placeholder="Deskripsi singkat tentang acara ini"
             disabled={submitting}
           />
         </div>
       </div>
 
-      <Button type="submit" disabled={submitting}>
-        {submitting ? <>Sedang membuat event...</> : "Buat sekarang"}
-      </Button>
+      <div className="form-footer">
+        <Button type="submit" disabled={submitting}>
+          {submitting ? <>Sedang membuat event...</> : "Buat sekarang"}
+        </Button>
+      </div>
     </Form>
   );
 };

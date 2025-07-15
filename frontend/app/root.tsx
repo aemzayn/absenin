@@ -8,6 +8,7 @@ import {
 } from "react-router";
 import { PrimeReactProvider } from "primereact/api";
 import "primereact/resources/themes/lara-dark-blue/theme.css";
+import "./style/app.scss";
 
 import type { Route } from "./+types/root";
 

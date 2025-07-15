@@ -8,6 +8,7 @@ import { InputText } from "primereact/inputtext";
 import { Calendar } from "primereact/calendar";
 import { InputTextarea } from "primereact/inputtextarea";
 import { Button } from "primereact/button";
+import { isProd } from "~/constants/prod";
 
 dayjs.extend(localize);
 
@@ -103,47 +104,56 @@ export const EditEventForm = ({
   }, [eventId]);
 
   return (
-    <Form onSubmit={handleUpdate} ref={formRef}>
-      <div>
-        <div>
-          <label htmlFor="name">Nama acara</label>
+    <Form onSubmit={handleUpdate} className="form">
+      <div className="form-field form-field-full">
+        <div className="p-inputgroup flex-1">
+          <label htmlFor="absenin_event_name" className="p-inputgroup-addon">
+            Nama Acara
+          </label>
           <InputText
-            id="name"
-            name="name"
+            id="absenin_event_name"
+            name="absenin_event_name"
             type="text"
             required
             minLength={3}
             maxLength={100}
+            placeholder="Bakti sosial"
             disabled={submitting}
           />
         </div>
+      </div>
 
-        <div>
-          <div>
-            <span>Tanggal acara</span>
-            {eventDateFormatted && <span>{eventDateFormatted}</span>}
-          </div>
-
-          <div>
-            <Calendar
-              id="date"
-              name="date"
-              value={date}
-              onChange={(e) => setDate(e.value ?? null)}
-              showIcon
-              showButtonBar
-              dateFormat="dd/mm/yy"
-              placeholder="Pilih tanggal acara"
-              disabled={submitting}
-            />
-          </div>
+      <div className="form-field form-field-full">
+        <div className="p-inputgroup flex-1">
+          <label htmlFor="absenin_event_date" className="p-inputgroup-addon">
+            Tanggal acara
+          </label>
+          <Calendar
+            id="absenin_event_date"
+            name="absenin_event_date"
+            value={date}
+            onChange={(e) => setDate(e.value ?? null)}
+            showIcon
+            showButtonBar
+            dateFormat="dd/mm/yy"
+            placeholder="Pilih tanggal acara"
+            disabled={submitting}
+            minDate={isProd ? dayjs().subtract(1, "day").toDate() : undefined}
+          />
         </div>
+      </div>
 
-        <div>
-          <label htmlFor="location">Lokasi acara (opsional)</label>
+      <div className="form-field form-field-full">
+        <div className="p-inputgroup flex-1">
+          <label
+            className="p-inputgroup-addon"
+            htmlFor="absenin_event_location"
+          >
+            Lokasi acara (opsional)
+          </label>
           <InputText
-            id="location"
-            name="location"
+            id="absenin_event_location"
+            name="absenin_event_location"
             type="text"
             minLength={3}
             maxLength={255}
@@ -151,32 +161,44 @@ export const EditEventForm = ({
             placeholder="Contoh: Jakarta, Indonesia"
           />
         </div>
+      </div>
 
-        <div>
-          <label htmlFor="description">Deskripsi acara (opsional)</label>
+      <div className="form-field form-field-full">
+        <div className="p-inputgroup flex-1">
+          <label
+            className="p-inputgroup-addon"
+            htmlFor="absenin_event_description"
+          >
+            Deskripsi acara (opsional)
+          </label>
           <InputTextarea
-            id="description"
-            name="description"
+            id="absenin_event_description"
+            name="absenin_event_description"
             minLength={3}
             maxLength={255}
+            rows={4}
             placeholder="Deskripsi singkat tentang acara ini"
             disabled={submitting}
           />
         </div>
       </div>
 
-      <div>
-        <Button type="submit" disabled={submitting}>
-          {submitting ? <>Sedang memperbarui acara...</> : "Update acara"}
-        </Button>
-
+      <div className="form-footer">
         <Button
+          size="small"
           type="button"
           disabled={submitting || !eventId}
           onClick={handleDelete}
-        >
-          Hapus acara
-        </Button>
+          severity="danger"
+          label="Hapus acara"
+        />
+
+        <Button
+          type="submit"
+          disabled={submitting}
+          size="small"
+          label={submitting ? "Sedang memperbarui acara..." : "Update acara"}
+        />
       </div>
     </Form>
   );

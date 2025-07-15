@@ -1,4 +1,4 @@
-import { EventListHome } from "~/components/event-list-home";
+import { EventListHome } from "~/components/list/event-list-home";
 import type { Event } from "~/interfaces/event";
 
 type HomeProps = {

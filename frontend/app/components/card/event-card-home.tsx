@@ -4,12 +4,13 @@ import { dateToString } from "~/lib/date-format";
 import { Card } from "primereact/card";
 import { Link } from "react-router";
 import { Button } from "primereact/button";
+import { SCANNER_EVENT_ROUTE } from "~/constants/routes";
 
-type Props = {
+type EventCardHomeProps = {
   event: Event;
 };
 
-export function EventCardHome({ event }: Props) {
+export function EventCardHome({ event }: EventCardHomeProps) {
   const organizationName = event.Organization?.name ?? "-";
   const eventLocation = event.location ?? "-";
   const eventDate = dateToString(event.date);
@@ -31,12 +32,15 @@ export function EventCardHome({ event }: Props) {
         </p>
       </div>
       <div>
-        <Link to={`/scanner/${event.id}`}>
-          <Button>
-            <ScanQrCode /> Scan QR Code
-          </Button>
-        </Link>
-        <Link to={`/event/${event.id}/attendees`}>
+        {isToday && (
+          <Link to={SCANNER_EVENT_ROUTE(event.id)}>
+            <Button>
+              <ScanQrCode /> Scan QR Code
+            </Button>
+          </Link>
+        )}
+
+        <Link to={`/acara/${event.id}/attendees`}>
           <Button>Daftar Hadir</Button>
         </Link>
       </div>

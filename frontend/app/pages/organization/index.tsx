@@ -3,7 +3,7 @@ import { Dialog } from "primereact/dialog";
 import { useState } from "react";
 import { useRevalidator } from "react-router";
 import { OrganizationForm } from "~/components/form/organization-form";
-import { OrganizationList } from "~/components/organization-list";
+import { OrganizationList } from "~/components/list/organization-list";
 import type { Organization } from "~/interfaces/organization";
 
 type OrganizationProps = {
@@ -20,6 +20,8 @@ export function OrganizationPage({ organizations }: OrganizationProps) {
     setShowForm(false);
     revalidate();
   };
+
+  console.log(showForm);
 
   const handleFailCreateOrganization = () => {};
 
@@ -39,6 +41,8 @@ export function OrganizationPage({ organizations }: OrganizationProps) {
         </>
       )}
 
+      <OrganizationList organizations={organizations} />
+
       <Dialog
         visible={showForm}
         onHide={() => setShowForm(false)}
@@ -49,10 +53,6 @@ export function OrganizationPage({ organizations }: OrganizationProps) {
           onFailure={handleFailCreateOrganization}
         />
       </Dialog>
-
-      <div>
-        <OrganizationList organizations={organizations} />
-      </div>
     </div>
   );
 }

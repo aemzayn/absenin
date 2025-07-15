@@ -1,5 +1,5 @@
 import { TabPanel, TabView } from "primereact/tabview";
-import { MembersTable } from "~/components/members-table";
+import { MembersTable } from "~/components/table/members-table";
 import { EventsTable } from "~/components/table/events-table";
 import type { Organization } from "~/interfaces/organization";
 

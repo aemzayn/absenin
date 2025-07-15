@@ -3,7 +3,7 @@ import type { Member } from "~/interfaces/member";
 import { MembersService } from "~/services/members.service";
 import { downloadQRCode } from "~/lib/download-qr";
 import { useSkipper } from "~/hooks/use-skipper";
-import { NewMemberForm } from "./form/member-form";
+import { NewMemberForm } from "../../form/member-form";
 import { InputText } from "primereact/inputtext";
 
 type Props = {

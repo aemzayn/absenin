@@ -12,13 +12,13 @@ export default [
     route("members", "routes/members.tsx"),
     route("scanner/:eventId", "routes/scanner.tsx"),
 
-    ...prefix("event", [
+    ...prefix("acara", [
       route(":eventId", "routes/event.tsx"),
       route(":eventId/attendees", "routes/event-attendees.tsx"),
       route(":eventId/scan", "routes/event-qr-scanner.tsx"),
     ]),
 
-    ...prefix("organization", [
+    ...prefix("yayasan", [
       index("routes/organization.tsx"),
       route(":organizationId", "routes/organization-detail.tsx"),
     ]),
