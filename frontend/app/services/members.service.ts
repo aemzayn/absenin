@@ -2,12 +2,10 @@ import apiClient from "~/api/client";
 import { type Member } from "~/interfaces/member";
 
 export class MembersService {
-  static async getMembers() {
-    return apiClient.get("/v1/members");
-  }
-
-  static async getMembersByOrganization(organizationId: number) {
-    return apiClient.get("/v1/members/organization/" + organizationId);
+  static async getMembers({ organizationId }: { organizationId: number }) {
+    return apiClient.get("/v1/members", {
+      params: { organizationId },
+    });
   }
 
   static async createMember(organizationId: number, member: Partial<Member>) {
@@ -24,15 +22,15 @@ export class MembersService {
     });
   }
 
-  static async updateMemberById(id: number, member: Member) {
+  static async updateMember(id: number, member: Member) {
     return apiClient.put(`/v1/members/${id}`, member);
   }
 
-  static async getMemberById(id: number) {
+  static async getMember(id: number) {
     return apiClient.get(`/v1/members/${id}`);
   }
 
-  static async deleteMemberById(id: number) {
+  static async deleteMember(id: number) {
     return apiClient.delete(`/v1/members/${id}`);
   }
 }

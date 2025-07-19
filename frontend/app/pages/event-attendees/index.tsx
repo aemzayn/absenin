@@ -4,6 +4,7 @@ import type { Attendee } from "~/interfaces/attendee";
 type EventAttendeesPageProps = {
   attendees: Attendee[];
 };
+
 export function EventAttendees({ attendees }: EventAttendeesPageProps) {
   return (
     <div>

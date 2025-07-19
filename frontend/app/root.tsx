@@ -11,6 +11,7 @@ import "primereact/resources/themes/lara-dark-blue/theme.css";
 import "./style/app.scss";
 
 import type { Route } from "./+types/root";
+import { ConfirmDialog } from "primereact/confirmdialog";
 
 export const links: Route.LinksFunction = () => [
   { rel: "preconnect", href: "https://fonts.googleapis.com" },
@@ -48,6 +49,7 @@ export default function App() {
     <Layout>
       <PrimeReactProvider>
         <Outlet />
+        <ConfirmDialog />
       </PrimeReactProvider>
     </Layout>
   );

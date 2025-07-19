@@ -1,6 +1,7 @@
 import { Router } from "express";
 
 import authRouter from "./auth.route";
+import donorRouter from "./donor.route";
 import eventRouter from "./event.route";
 import memberRouter from "./member.route";
 import organizationRouter from "./organization.route";
@@ -9,6 +10,7 @@ import qrcodeRouter from "./qrcode.route";
 const router = Router();
 
 router.use("/auth", authRouter);
+router.use("/donors", donorRouter);
 router.use("/events", eventRouter);
 router.use("/members", memberRouter);
 router.use("/organizations", organizationRouter);
