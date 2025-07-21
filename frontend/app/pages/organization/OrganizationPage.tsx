@@ -39,9 +39,13 @@ export function OrganizationPage({ organizations }: OrganizationProps) {
           <Button onClick={() => setShowForm(true)}>Buat organisasi</Button>
         </>
       )}
-
+      {totalOrganizations > 0 && (
+        <div className="mb-2">
+          <Button onClick={() => setShowForm(true)}>Buat organisasi</Button>
+        </div>
+      )}
       <OrganizationList organizations={organizations} />
-
+        
       <Dialog
         visible={showForm}
         onHide={() => setShowForm(false)}
