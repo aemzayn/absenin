@@ -20,7 +20,6 @@ export function OrganizationCard({ organization }: Props) {
           navigate(ORGANIZATION_ID_ROUTE(organization.id));
         }}
         label="Kunjungi"
-        size="small"
       />
     </Card>
   );

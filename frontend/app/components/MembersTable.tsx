@@ -12,6 +12,9 @@ import type { Donor } from "~/interfaces/donor";
 import { Dialog } from "primereact/dialog";
 import { MemberImagePreview } from "~/components/image/MemberImagePreview";
 import { QrCode } from "lucide-react";
+import { EditIcon } from "./icons/EditIcon";
+import { TrashIcon } from "./icons/TrashIcon";
+import { PlusIcon } from "./icons/PlusIcon";
 
 type MembersTableProps = {
   organizationId: number;
@@ -100,7 +103,7 @@ export const MembersTable = ({ organizationId, donors }: MembersTableProps) => {
       <Toast ref={toast} />
       <Button
         label="Tambah Peserta"
-        icon="pi pi-plus"
+        icon={<PlusIcon />}
         onClick={() => {
           setIsEditMember(false);
           setSelectedMember(null);
@@ -127,7 +130,7 @@ export const MembersTable = ({ organizationId, donors }: MembersTableProps) => {
                   setShowImage(true);
                 }
               }}
-            ></Button>
+            />
           )}
         />
         <Column
@@ -138,7 +141,7 @@ export const MembersTable = ({ organizationId, donors }: MembersTableProps) => {
               label="Unduh QR Code"
               onClick={() => handleDownloadQrCode(rowData)}
               severity="secondary"
-            ></Button>
+            />
           )}
         />
         <Column
@@ -146,16 +149,15 @@ export const MembersTable = ({ organizationId, donors }: MembersTableProps) => {
           body={(rowData) => (
             <div className="flex gap-2">
               <Button
-                icon="pi pi-pencil"
+                icon={<EditIcon />}
                 label="Edit"
                 onClick={() => handleUpdateMember(rowData)}
-                size="small"
               />
               <Button
-                icon="pi pi-trash"
+                icon={<TrashIcon />}
                 label="Hapus"
+                severity="danger"
                 onClick={() => handleRemoveMember(rowData.id)}
-                size="small"
               />
             </div>
           )}

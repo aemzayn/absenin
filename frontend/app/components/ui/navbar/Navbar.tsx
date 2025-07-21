@@ -32,7 +32,6 @@ export default function Navbar() {
 
       <div>
         <Button
-          size="small"
           className="logout-button"
           onClick={handleSignOut}
           label="Keluar"

@@ -22,8 +22,6 @@ export function OrganizationPage({ organizations }: OrganizationProps) {
     revalidate();
   };
 
-  console.log(showForm);
-
   const handleFailCreateOrganization = () => {};
 
   return (

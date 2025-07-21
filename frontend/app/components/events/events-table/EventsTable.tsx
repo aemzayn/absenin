@@ -8,9 +8,10 @@ import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
 import { dateToString } from "~/lib/date-format";
 import dayjs from "dayjs";
-import { Badge } from "primereact/badge";
-import { PencilIcon, PlusIcon } from "lucide-react";
+import { Tag } from "primereact/tag";
+import { EditIcon } from "~/components/icons/EditIcon";
 import "./events-table.scss";
+import { PlusIcon } from "~/components/icons/PlusIcon";
 
 type EventsTableProps = {
   organizationId: number;
@@ -48,8 +49,8 @@ export const EventsTable = ({ organizationId }: EventsTableProps) => {
     if (id == null) return "";
     return (
       <Button
-        size="small"
-        icon={<PencilIcon />}
+        label="Edit"
+        icon={<EditIcon />}
         onClick={() => {
           setSelectedEventId(id);
           setShowEditForm(true);
@@ -84,15 +85,15 @@ export const EventsTable = ({ organizationId }: EventsTableProps) => {
   const statusBodyTemplate = (date: Date) => {
     const hasPassed = date < today;
     if (hasPassed) {
-      return <Badge severity={"danger"} content="Sudah berlalu" />;
+      return <Tag severity={"danger"} value="Sudah berlalu" />;
     }
 
     const dayDiff = dayjs(date).diff(today, "days");
     if (dayDiff > 0) {
-      return <Badge severity={"info"} content={`${dayDiff} lagi`}></Badge>;
+      return <Tag severity={"info"} value={`${dayDiff} hari lagi`} />;
     }
 
-    return <Badge severity={"success"} content="Hari ini" />;
+    return <Tag severity={"success"} value="Hari ini" />;
   };
 
   return (
@@ -103,7 +104,6 @@ export const EventsTable = ({ organizationId }: EventsTableProps) => {
         }}
         label="Tambah Acara"
         icon={<PlusIcon />}
-        size="small"
         iconPos="right"
       />
 

@@ -185,7 +185,6 @@ export const EditEventForm = ({
 
       <div className="form-footer">
         <Button
-          size="small"
           type="button"
           disabled={submitting || !eventId}
           onClick={handleDelete}
@@ -196,7 +195,6 @@ export const EditEventForm = ({
         <Button
           type="submit"
           disabled={submitting}
-          size="small"
           label={submitting ? "Sedang memperbarui acara..." : "Update acara"}
         />
       </div>

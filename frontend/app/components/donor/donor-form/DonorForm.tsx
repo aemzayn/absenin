@@ -1,14 +1,8 @@
 import { useRef, useState } from "react";
 import { Form } from "react-router";
-import { SpinnerIcon } from "../../icons/SpinnerIcon";
-import type { Member } from "~/interfaces/member";
-import { MembersService } from "~/services/members.service";
 import { InputText } from "primereact/inputtext";
 import { Button } from "primereact/button";
 import type { Donor } from "~/interfaces/donor";
-import { InputNumber } from "primereact/inputnumber";
-import { Dropdown } from "primereact/dropdown";
-import { FileUpload, type FileUploadSelectEvent } from "primereact/fileupload";
 import { Toast } from "primereact/toast";
 import { isAxiosError } from "axios";
 import { DonorService } from "~/services/donor.service";
@@ -16,28 +10,30 @@ import { DonorService } from "~/services/donor.service";
 type DonorFormProps = {
   organizationId: number;
   onCreate?: (donor: Donor) => void;
+  onUpdate?: (donor: Donor) => void;
   selectedDonor?: Donor | null;
+  isEdit: boolean;
 };
 
 export const DonorForm = ({
   organizationId,
-  onCreate,
   selectedDonor,
+  isEdit = false,
+  onCreate,
+  onUpdate,
 }: DonorFormProps) => {
   const [donorForm, setDonorForm] = useState<Partial<Donor>>({
-    name: "",
+    name: selectedDonor?.name || "",
   });
 
   const [submitting, setSubmitting] = useState(false);
   const formRef = useRef<HTMLFormElement>(null);
   const toast = useRef<Toast>(null);
 
-  const handleCreate = async (event: React.FormEvent<HTMLFormElement>) => {
+  const handleCreate = async () => {
     try {
       setSubmitting(true);
-      event.preventDefault();
-      const formData = new FormData(event.currentTarget);
-      const name = formData.get("absenin_donor_name") as string;
+      const name = donorForm.name as string;
 
       const res = await DonorService.createDonor({
         name,
@@ -46,9 +42,6 @@ export const DonorForm = ({
 
       const donor: Donor = res.data.data;
       onCreate?.(donor);
-
-      // Reset the form
-      formRef.current?.reset();
 
       toast.current?.show({
         severity: "success",
@@ -72,9 +65,56 @@ export const DonorForm = ({
     }
   };
 
+  const handleUpdate = async () => {
+    try {
+      setSubmitting(true);
+      if (!selectedDonor) return;
+
+      const name = donorForm.name as string;
+
+      const res = await DonorService.updateDonor(selectedDonor.id, {
+        id: selectedDonor.id,
+        name,
+        organizationId,
+      });
+
+      const donor: Donor = res.data.data;
+      onUpdate?.(donor);
+
+      toast.current?.show({
+        severity: "success",
+        summary: "Donatur berhasil diperbarui",
+        detail: `Donatur ${donor.name} berhasil diperbarui.`,
+      });
+    } catch (error) {
+      console.error("Error updating donor:", error);
+      let errorMessage = "Terjadi kesalahan saat memperbarui donatur.";
+      if (isAxiosError(error)) {
+        errorMessage = error.response?.data?.error || errorMessage;
+      }
+
+      toast.current?.show({
+        severity: "error",
+        summary: "Gagal memperbarui donatur",
+        detail: errorMessage,
+      });
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    if (isEdit) {
+      handleUpdate();
+    } else {
+      handleCreate();
+    }
+  };
+
   return (
     <>
-      <Form onSubmit={handleCreate} ref={formRef} className="form">
+      <Form onSubmit={handleSubmit} ref={formRef} className="form">
         <div className="form-field form-field-full">
           <div className="p-inputgroup flex-1">
             <label htmlFor="absenin_donor_name" className="p-inputgroup-addon">
@@ -89,18 +129,34 @@ export const DonorForm = ({
               maxLength={100}
               placeholder="Masukkan nama lengkap donatur"
               disabled={submitting}
+              value={donorForm.name}
+              onChange={(e) =>
+                setDonorForm({ ...donorForm, name: e.target.value })
+              }
             />
           </div>
         </div>
 
         <div className="form-footer">
-          <Button type="submit" disabled={submitting}>
-            {submitting ? (
-              <>Sedang menambahkan donatur...</>
-            ) : (
-              "Tambahkan Donatur"
-            )}
-          </Button>
+          {!isEdit && (
+            <Button type="submit" disabled={submitting}>
+              {submitting ? (
+                <>Sedang menambahkan donatur...</>
+              ) : (
+                "Tambahkan Donatur"
+              )}
+            </Button>
+          )}
+
+          {isEdit && (
+            <Button type="submit" disabled={submitting}>
+              {submitting ? (
+                <>Sedang memperbarui donatur...</>
+              ) : (
+                "Perbarui Donatur"
+              )}
+            </Button>
+          )}
         </div>
       </Form>
 

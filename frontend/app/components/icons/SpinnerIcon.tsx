@@ -1,5 +1,3 @@
 import { LoaderCircle } from "lucide-react";
 
-export const SpinnerIcon = () => {
-  return <LoaderCircle />;
-};
+export const SpinnerIcon = () => <LoaderCircle />;
