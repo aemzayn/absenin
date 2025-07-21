@@ -137,6 +137,7 @@ export const MembersTable = ({ organizationId, donors }: MembersTableProps) => {
               icon={<QrCode />}
               label="Unduh QR Code"
               onClick={() => handleDownloadQrCode(rowData)}
+              severity="secondary"
             ></Button>
           )}
         />
@@ -148,11 +149,13 @@ export const MembersTable = ({ organizationId, donors }: MembersTableProps) => {
                 icon="pi pi-pencil"
                 label="Edit"
                 onClick={() => handleUpdateMember(rowData)}
+                size="small"
               />
               <Button
                 icon="pi pi-trash"
                 label="Hapus"
                 onClick={() => handleRemoveMember(rowData.id)}
+                size="small"
               />
             </div>
           )}

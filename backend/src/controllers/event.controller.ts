@@ -24,8 +24,8 @@ export async function getUpcomingEvents(
     const events = await db.event.findMany({
       where: {
         date: { gte: todayUtc },
-        Organization: {
-          OrganizationMembership: {
+        organization: {
+          organizationMembership: {
             some: {
               userId: userId,
             },
@@ -33,7 +33,7 @@ export async function getUpcomingEvents(
         },
       },
       include: {
-        Organization: {
+        organization: {
           select: {
             id: true,
             name: true,
@@ -68,9 +68,9 @@ export async function getUpcomingEventsByOrganization(
     const events = await db.event.findMany({
       where: {
         date: { gte: todayUtc },
-        Organization: {
+        organization: {
           id: organizationId,
-          OrganizationMembership: {
+          organizationMembership: {
             some: {
               userId: userId,
             },
@@ -126,7 +126,7 @@ export async function getEventAttendees(
         id: +eventId,
       },
       include: {
-        Organization: {
+        organization: {
           include: {
             members: {
               select: {
@@ -153,7 +153,7 @@ export async function getEventAttendees(
           select: {
             id: true,
             name: true,
-            EventMember: {
+            events: {
               select: {
                 createdAt: true,
               },
@@ -169,7 +169,7 @@ export async function getEventAttendees(
       attendeedIds[attendee.memberId] = true;
     }
 
-    const members = event.Organization?.members ?? [];
+    const members = event.organization?.members ?? [];
 
     const allMembers = [];
     for (const member of members) {
@@ -222,7 +222,7 @@ export async function createEvent(
         date: eventDate,
         location,
         description,
-        Organization: {
+        organization: {
           connect: {
             id: organizationId,
           },
@@ -278,8 +278,8 @@ export async function deleteEvent(
       where: {
         id: eventId,
         AND: {
-          Organization: {
-            OrganizationMembership: {
+          organization: {
+            organizationMembership: {
               some: {
                 userId: userId,
               },

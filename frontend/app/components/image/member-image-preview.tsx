@@ -1,4 +1,5 @@
 import type { Member } from "~/interfaces/member";
+import "./member-image-preview.scss";
 
 type MemberImagePreviewProps = {
   member: Member;
