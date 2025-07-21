@@ -1,6 +1,6 @@
 import { OrganizationService } from "~/services/organization.service";
 import { useLoaderData } from "react-router";
-import { OrganizationPage } from "~/pages/organization";
+import { OrganizationPage } from "~/pages/organization/OrganizationPage";
 import type { Organization } from "~/interfaces/organization";
 
 export function meta() {

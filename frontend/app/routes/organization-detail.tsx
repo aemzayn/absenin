@@ -1,7 +1,7 @@
 import { OrganizationService } from "~/services/organization.service";
-import { NotFound } from "~/components/ui/not-found";
+import { NotFound } from "~/components/ui/not-found/NotFound";
 import { useLoaderData } from "react-router";
-import { OrganizationDetail } from "~/pages/organization-detail";
+import { OrganizationDetail } from "~/pages/organization-detail/OrganizationDetail";
 import type { Route } from "./+types/organization-detail";
 import type { Organization } from "~/interfaces/organization";
 

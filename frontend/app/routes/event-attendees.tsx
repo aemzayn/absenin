@@ -1,5 +1,5 @@
 import { EventService } from "~/services/event.service";
-import { EventAttendees } from "~/pages/event-attendees";
+import { EventAttendees } from "~/pages/event-attendees/EventAttendees";
 import type { Route } from "./+types/event-attendees";
 import type { Attendee } from "~/interfaces/attendee";
 

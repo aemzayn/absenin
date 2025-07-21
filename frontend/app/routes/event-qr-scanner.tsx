@@ -1,9 +1,9 @@
-import { EventQrScanner } from "~/pages/event-qr-scanner";
+import { EventQrScannerPage } from "~/pages/event-qr-scanner/EventQrScannerPage";
 
 export function meta() {
   return [{ title: "San QR Event" }];
 }
 
 export default function EventQrScannerRoute() {
-  return <EventQrScanner />;
+  return <EventQrScannerPage />;
 }

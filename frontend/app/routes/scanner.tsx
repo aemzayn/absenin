@@ -1,6 +1,6 @@
 import { redirect } from "react-router";
 import { EventService } from "~/services/event.service";
-import { ScannerPage } from "~/pages/scanner";
+import { ScannerPage } from "~/pages/scanner/ScannerPage";
 import type { Route } from "./+types/scanner";
 import type { Event } from "~/interfaces/event";
 

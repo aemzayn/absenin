@@ -1,7 +1,7 @@
 import { MembersService } from "~/services/members.service";
 import type { Route } from "./+types/members";
 import type { Member } from "~/interfaces/member";
-import { Members } from "~/pages/members";
+import { MembersPage } from "~/pages/members/MembersPage";
 
 export async function clientLoader() {
   const res = await MembersService.getMembers();
@@ -19,5 +19,5 @@ export function meta() {
 
 export default function MembersRoute({ loaderData }: Route.ComponentProps) {
   const members: Member[] = loaderData.members;
-  return <Members members={members} />;
+  return <MembersPage members={members} />;
 }

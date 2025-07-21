@@ -1,7 +1,7 @@
 import type { Route } from "./+types/home";
 import { EventService } from "~/services/event.service";
 import type { Event } from "~/interfaces/event";
-import { Home } from "~/pages/home";
+import { HomePage } from "~/pages/home/HomePage";
 
 export function meta() {
   return [{ title: "Home" }];
@@ -16,5 +16,5 @@ export async function clientLoader() {
 export default function HomeRoute({ loaderData }: Route.ComponentProps) {
   const events: Event[] = loaderData.events;
 
-  return <Home events={events} />;
+  return <HomePage events={events} />;
 }
