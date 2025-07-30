@@ -2,7 +2,11 @@ import { Link, useMatch, useNavigate } from "react-router";
 import { AuthService } from "~/services/auth.service";
 import { LogOut } from "lucide-react";
 import { Button } from "primereact/button";
-import { ORGANIZATION_ROUTE, HOME_ROUTE } from "~/constants/routes";
+import {
+  ORGANIZATION_ROUTE,
+  HOME_ROUTE,
+  LOGIN_ROUTE,
+} from "~/constants/routes";
 import "./navbar.scss";
 
 export default function Navbar() {
@@ -13,7 +17,9 @@ export default function Navbar() {
 
   const handleSignOut = () => {
     AuthService.logout();
-    navigate("/login");
+    navigate(LOGIN_ROUTE(), {
+      replace: true,
+    });
   };
 
   return (

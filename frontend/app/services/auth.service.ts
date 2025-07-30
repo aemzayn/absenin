@@ -28,6 +28,7 @@ export class AuthService {
   static async logout() {
     sessionStorage.removeItem(ACCESS_TOKEN);
     sessionStorage.removeItem(REFRESH_TOKEN);
+    sessionStorage.removeItem("orphana-user");
     delete apiClient.defaults.headers.common["Authorization"];
     delete apiClient.defaults.headers.common["x-refresh-token"];
   }

@@ -12,6 +12,8 @@ export default [
     route("members", "routes/members.tsx"),
     route("scanner/:eventId", "routes/scanner.tsx"),
 
+    ...prefix("dashboard", [index("routes/dashboard.tsx")]),
+
     ...prefix("acara", [
       route(":eventId", "routes/event.tsx"),
       route(":eventId/attendees", "routes/event-attendees.tsx"),

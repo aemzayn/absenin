@@ -1,12 +1,15 @@
 import { useNavigate } from "react-router";
 import { HomeIcon } from "lucide-react";
 import { Button } from "primereact/button";
+import { DASHBOARD_ROUTE } from "~/constants/routes";
 
 export const NotFound = () => {
   const navigate = useNavigate();
 
   const handleHomeClick = () => {
-    navigate("/");
+    navigate(DASHBOARD_ROUTE(), {
+      replace: true,
+    });
   };
 
   return (

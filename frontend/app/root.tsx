@@ -6,12 +6,12 @@ import {
   Scripts,
   ScrollRestoration,
 } from "react-router";
-import { PrimeReactProvider } from "primereact/api";
-import "primereact/resources/themes/lara-dark-blue/theme.css";
-import "./style/app.scss";
+import "./style/global.css";
 
 import type { Route } from "./+types/root";
 import { ConfirmDialog } from "primereact/confirmdialog";
+import { ThemeProvider } from "next-themes";
+import { AuthProvider } from "./contexts/auth-contexts";
 
 export const links: Route.LinksFunction = () => [
   { rel: "preconnect", href: "https://fonts.googleapis.com" },
@@ -28,7 +28,7 @@ export const links: Route.LinksFunction = () => [
 
 export function Layout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <head>
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -46,12 +46,14 @@ export function Layout({ children }: { children: React.ReactNode }) {
 
 export default function App() {
   return (
-    <Layout>
-      <PrimeReactProvider>
-        <Outlet />
-        <ConfirmDialog />
-      </PrimeReactProvider>
-    </Layout>
+    <ThemeProvider>
+      <AuthProvider>
+        <Layout>
+          <Outlet />
+          <ConfirmDialog />
+        </Layout>
+      </AuthProvider>
+    </ThemeProvider>
   );
 }
 
