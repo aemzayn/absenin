@@ -15,7 +15,11 @@ if (config.nodeEnv === "production") {
   app.use(morgan("dev"));
 }
 
-app.use(express.json());
+app.use(
+  express.json({
+    limit: "10mb",
+  })
+);
 
 app.get("/", (req, res) => {
   res.send("Hello World!");
@@ -32,7 +36,7 @@ app.use("/api/v1", apiV1);
 
 // error handling middleware
 app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
-  console.error(err.stack);
+  console.error(err);
   res.status(500).json({
     error: "Internal Server Error",
     detail: err,

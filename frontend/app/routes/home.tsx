@@ -1,7 +1,7 @@
 import type { Route } from "./+types/home";
 import { EventService } from "~/services/event.service";
 import type { Event } from "~/interfaces/event";
-import { EventListHome } from "~/components/event-list-home";
+import { HomePage } from "~/pages/home/HomePage";
 
 export function meta() {
   return [{ title: "Home" }];
@@ -13,12 +13,8 @@ export async function clientLoader() {
   return { events };
 }
 
-export default function Home({ loaderData }: Route.ComponentProps) {
+export default function HomeRoute({ loaderData }: Route.ComponentProps) {
   const events: Event[] = loaderData.events;
 
-  return (
-    <div className="container mx-auto p-4">
-      <EventListHome events={events} />
-    </div>
-  );
+  return <HomePage events={events} />;
 }

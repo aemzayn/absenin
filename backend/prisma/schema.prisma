@@ -23,14 +23,37 @@ model User {
 }
 
 model Member {
-  id   Int    @id @default(autoincrement())
-  name String @db.VarChar(255)
+  id       Int     @id @default(autoincrement())
+  name     String  @db.VarChar(255)
+  image    String? @db.Text
+  memberNo Int
+  qrcode   Qrcode?
 
-  qrcode Qrcode?
-
-  Organization   Organization  @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  organization   Organization  @relation(fields: [organizationId], references: [id], onDelete: Cascade)
   organizationId Int
-  EventMember    EventMember[]
+  events         EventMember[]
+
+  donor   Donor? @relation(fields: [donorId], references: [id], onDelete: SetNull)
+  donorId Int?
+
+  @@unique([memberNo, organizationId])
+  @@unique([name, organizationId])
+  @@index([organizationId])
+  @@index([donorId])
+  @@index([memberNo])
+}
+
+model Donor {
+  id       Int    @id @default(autoincrement())
+  name     String @db.VarChar(255)
+  memberId Int?
+
+  Member Member[]
+
+  organization   Organization? @relation(fields: [organizationId], references: [id], onDelete: SetNull)
+  organizationId Int?
+
+  @@unique([name, organizationId])
 }
 
 model Qrcode {
@@ -55,7 +78,8 @@ model Organization {
   updatedAt              DateTime                 @default(now()) @updatedAt @db.Timestamptz(3)
   members                Member[]
   events                 Event[]
-  OrganizationMembership OrganizationMembership[]
+  organizationMembership OrganizationMembership[]
+  donors                 Donor[]
 }
 
 model Event {
@@ -66,9 +90,9 @@ model Event {
   location       String?       @db.VarChar(255)
   createdAt      DateTime      @default(now()) @db.Timestamptz(3)
   updatedAt      DateTime      @default(now()) @updatedAt @db.Timestamptz(3)
-  Organization   Organization? @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  organization   Organization? @relation(fields: [organizationId], references: [id], onDelete: Cascade)
   organizationId Int?
-  EventMember    EventMember[]
+  eventMembers   EventMember[]
 }
 
 model EventMember {
@@ -100,8 +124,8 @@ model OrganizationMembership {
   joinedAt       DateTime         @default(now()) @db.Timestamptz(3)
   createdAt      DateTime         @default(now()) @db.Timestamptz(3)
   updatedAt      DateTime         @default(now()) @updatedAt @db.Timestamptz(3)
-  User           User             @relation(fields: [userId], references: [id], onDelete: Cascade)
-  Organization   Organization     @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  user           User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  organization   Organization     @relation(fields: [organizationId], references: [id], onDelete: Cascade)
 
   @@unique([userId, organizationId])
   @@index([userId])

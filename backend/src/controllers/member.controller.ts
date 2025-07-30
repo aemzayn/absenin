@@ -21,36 +21,10 @@ export async function getMembers(
     const members = await db.member.findMany({
       include: {
         qrcode: true,
+        donor: true,
       },
       where: {
         organizationId: +organizationId,
-      },
-      orderBy: {
-        name: "asc",
-      },
-    });
-    res.status(200).json({
-      data: members,
-    });
-  } catch (error) {
-    next(error);
-  }
-}
-
-export async function getMembersByOrganization(
-  req: Request,
-  res: Response,
-  next: NextFunction
-) {
-  try {
-    const organizationId = +req.params.organizationId;
-
-    const members = await db.member.findMany({
-      include: {
-        qrcode: true,
-      },
-      where: {
-        organizationId,
       },
       orderBy: {
         name: "asc",
@@ -88,7 +62,7 @@ export async function getMemberById(
   }
 }
 
-export async function registerMember(
+export async function createMember(
   req: Request,
   res: Response,
   next: NextFunction
@@ -117,7 +91,7 @@ export async function registerMember(
 
     if (sameName) {
       res.status(400).json({
-        error: "Member with the same name already exists",
+        error: "Tidak bisa membuat anggota dengan nama yang sama",
       });
       return;
     }
@@ -126,6 +100,9 @@ export async function registerMember(
       data: {
         name: member.name,
         organizationId,
+        donorId: member.donorId,
+        memberNo: member.memberNo,
+        image: member.image,
       },
     });
 
@@ -147,6 +124,7 @@ export async function registerMember(
       },
       include: {
         qrcode: true,
+        donor: true,
       },
     });
 
@@ -159,7 +137,7 @@ export async function registerMember(
   }
 }
 
-export async function registerMembers(
+export async function createManyMembers(
   req: Request,
   res: Response,
   next: NextFunction
@@ -179,6 +157,8 @@ export async function registerMembers(
       data: members.map((member) => ({
         name: member.name,
         organizationId,
+        donorId: member.donorId,
+        memberNo: member.memberNo,
       })),
     });
 
@@ -244,10 +224,34 @@ export async function updateMember(
       return;
     }
 
+    const sameName = await db.member.findFirst({
+      where: {
+        name: req.body.name,
+        organizationId: member.organizationId,
+        id: {
+          not: id, // exclude current member
+        },
+      },
+    });
+
+    if (sameName) {
+      res.status(400).json({
+        error: "Tidak bisa mengubah nama anggota menjadi nama yang sudah ada",
+      });
+      return;
+    }
+
     const updatedMember = await db.member.update({
       where: { id },
       data: {
         name: req.body.name,
+        donorId: req.body.donorId,
+        memberNo: req.body.memberNo,
+        image: req.body.image,
+      },
+      include: {
+        qrcode: true,
+        donor: true,
       },
     });
 

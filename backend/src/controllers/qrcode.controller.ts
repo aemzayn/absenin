@@ -63,7 +63,7 @@ export async function signQrCode(
     const event = await db.event.findUnique({
       where: { id: +eventId },
       include: {
-        EventMember: {
+        eventMembers: {
           where: {
             memberId,
           },
@@ -78,7 +78,7 @@ export async function signQrCode(
       return;
     }
 
-    if (event.EventMember.length > 0) {
+    if (event.eventMembers.length > 0) {
       res.status(400).json({
         error: "Peserta sudah melakukan absensi",
       });

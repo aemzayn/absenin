@@ -1,7 +1,7 @@
 import { EventService } from "~/services/event.service";
+import { EventAttendees } from "~/pages/event-attendees/EventAttendees";
 import type { Route } from "./+types/event-attendees";
 import type { Attendee } from "~/interfaces/attendee";
-import { AttendeesTable } from "~/components/attendees-table";
 
 export function meta() {
   return [{ title: "Daftar Hadir" }];
@@ -20,16 +20,10 @@ export async function clientLoader({ params }: Route.ClientLoaderArgs) {
   return { attendees: data, eventId };
 }
 
-export default function EventAttendeesPage({
+export default function EventAttendeesRoute({
   loaderData,
 }: Route.ComponentProps) {
   const attendees: Attendee[] = loaderData.attendees;
 
-  return (
-    <div>
-      <h1 className="text-2xl font-bold">Daftar Hadir</h1>
-
-      <AttendeesTable attendees={attendees} />
-    </div>
-  );
+  return <EventAttendees attendees={attendees} />;
 }

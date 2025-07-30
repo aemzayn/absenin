@@ -11,7 +11,7 @@ export async function getMyOrganizations(
 
     const organizations = await db.organization.findMany({
       where: {
-        OrganizationMembership: {
+        organizationMembership: {
           some: {
             userId: userId,
           },
@@ -57,7 +57,7 @@ export async function createOrganization(
         email,
         phone,
         website,
-        OrganizationMembership: {
+        organizationMembership: {
           create: {
             userId,
             role: "OWNER",
