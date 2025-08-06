@@ -1,5 +1,7 @@
 @import "tailwindcss";
 
+@custom-variant dark (&:where([data-mode="dark"] * ));
+
 @layer utilities {
   .text-balance {
     text-wrap: balance;

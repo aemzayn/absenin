@@ -104,9 +104,11 @@ export default function LoginRoute() {
           </div>
         </div>
 
+        <p className="text-blue-500 dark:text-red-500">Blue or Red</p>
+
         <Card className="border-gray-200 dark:border-gray-800">
           <CardHeader>
-            <CardTitle className="text-center text-gray-900 dark:text-gray-100">
+            <CardTitle className="text-center text-gray-900 dark:text-green-500">
               Selamat Datang
             </CardTitle>
           </CardHeader>
@@ -123,7 +125,7 @@ export default function LoginRoute() {
               <div>
                 <Label
                   htmlFor="email"
-                  className="text-gray-700 dark:text-gray-300"
+                  className="text-gray-700 dark:text-yellow-100"
                 >
                   Alamat Email
                 </Label>
