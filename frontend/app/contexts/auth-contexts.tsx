@@ -4,6 +4,7 @@ import { isAxiosError } from "axios";
 import type React from "react";
 import { createContext, useContext, useEffect, useState } from "react";
 import { ACCESS_TOKEN, REFRESH_TOKEN } from "~/api/constants";
+import type { RegisterResponse, RegisterUser } from "~/interfaces/auth";
 import { AuthService } from "~/services/auth.service";
 
 interface User {
@@ -18,7 +19,8 @@ interface AuthContextType {
   login: (
     email: string,
     password: string
-  ) => Promise<{ success: boolean; error?: string }>;
+  ) => Promise<{ success: boolean; error?: string | null }>;
+  register: (user: RegisterUser) => Promise<RegisterResponse>;
   logout: () => void;
   isLoading: boolean;
 }
@@ -105,13 +107,29 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
+  const register = async (user: RegisterUser) => {
+    try {
+      await AuthService.register(user);
+      return {
+        success: true,
+        error: null,
+      };
+    } catch (error) {
+      console.log("Register error:", error);
+      return {
+        success: false,
+        error: "Terjadi kesalahan saat mendaftar",
+      };
+    }
+  };
+
   const logout = () => {
     setUser(null);
     localStorage.removeItem("user");
   };
 
   return (
-    <AuthContext.Provider value={{ user, login, logout, isLoading }}>
+    <AuthContext.Provider value={{ user, login, register, logout, isLoading }}>
       {children}
     </AuthContext.Provider>
   );

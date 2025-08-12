@@ -17,11 +17,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
 import { Alert, AlertDescription } from "~/components/ui/alert";
 import { useAuth } from "~/contexts/auth-contexts";
 import { useEffect, useState } from "react";
-import {
-  DASHBOARD_ROUTE,
-  HOME_ROUTE,
-  REGISTER_ROUTE,
-} from "~/constants/routes";
+import { DASHBOARD_ROUTE, REGISTER_ROUTE } from "~/constants/routes";
 import { Button } from "~/components/ui/button";
 
 export function meta() {
@@ -34,43 +30,6 @@ export function clientLoader() {
     throw redirect("/");
   }
   return null;
-}
-
-type LoginResponseData = {
-  data: {
-    accessToken: string;
-    refreshToken: string;
-  };
-  user: User;
-};
-
-export async function clientAction({ request }: ActionFunctionArgs) {
-  const formData = await request.formData();
-  const email = formData.get("email") as string;
-  const password = formData.get("password") as string;
-
-  try {
-    const res = await AuthService.login({ email, password });
-    const data = res.data as LoginResponseData;
-    const accessToken = data.data.accessToken;
-    const refreshToken = data.data.refreshToken;
-
-    sessionStorage.setItem(REFRESH_TOKEN, refreshToken);
-    sessionStorage.setItem(ACCESS_TOKEN, accessToken);
-  } catch (error) {
-    if (error instanceof AxiosError) {
-      const status = error.response?.status;
-      if (status === 404) {
-        // toast("Akun tidak ditemukan");
-      } else if (status === 400) {
-        // toast("Email atau kata sandi salah");
-      } else {
-        // toast("Terjadi kesalahan saat login");
-      }
-    } else {
-      // toast("Terjadi kesalahan saat login");
-    }
-  }
 }
 
 export default function LoginRoute() {
