@@ -1,5 +1,10 @@
 import { AxiosError } from "axios";
-import { redirect, useNavigate, type ActionFunctionArgs } from "react-router";
+import {
+  Link,
+  redirect,
+  useNavigate,
+  type ActionFunctionArgs,
+} from "react-router";
 import { ACCESS_TOKEN, REFRESH_TOKEN } from "~/api/constants";
 import type { User } from "~/interfaces/user";
 import { AuthService } from "~/services/auth.service";
@@ -12,7 +17,11 @@ import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
 import { Alert, AlertDescription } from "~/components/ui/alert";
 import { useAuth } from "~/contexts/auth-contexts";
 import { useEffect, useState } from "react";
-import { DASHBOARD_ROUTE, HOME_ROUTE } from "~/constants/routes";
+import {
+  DASHBOARD_ROUTE,
+  HOME_ROUTE,
+  REGISTER_ROUTE,
+} from "~/constants/routes";
 import { Button } from "~/components/ui/button";
 
 export function meta() {
@@ -104,11 +113,9 @@ export default function LoginRoute() {
           </div>
         </div>
 
-        <p className="text-blue-500 dark:text-red-500">Blue or Red</p>
-
         <Card className="border-gray-200 dark:border-gray-800">
           <CardHeader>
-            <CardTitle className="text-center text-gray-900 dark:text-green-500">
+            <CardTitle className="text-center text-gray-900 dark:text-gray-100">
               Selamat Datang
             </CardTitle>
           </CardHeader>
@@ -125,7 +132,7 @@ export default function LoginRoute() {
               <div>
                 <Label
                   htmlFor="email"
-                  className="text-gray-700 dark:text-yellow-100"
+                  className="text-gray-700 dark:text-gray-300"
                 >
                   Alamat Email
                 </Label>
@@ -186,10 +193,15 @@ export default function LoginRoute() {
           </CardContent>
         </Card>
 
-        {/* Footer */}
         <div className="text-center">
           <p className="text-xs text-gray-500 dark:text-gray-400">
-            Butuh bantuan? Hubungi administrator sistem Anda
+            Belum punya akun?{" "}
+            <Link
+              to={REGISTER_ROUTE()}
+              className="text-blue-600 hover:text-blue-700 dark:text-blue-400"
+            >
+              Daftar
+            </Link>
           </p>
         </div>
       </div>
